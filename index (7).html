@@ -1,0 +1,2951 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>MEGA</title>
+  <style>
+    :root{
+      --red:#d32f2f;
+      --red-weak:#f6b2b2;
+      --bg:#ffffff;
+      --text:#111;
+      --muted:#666;
+      --radius:10px;
+      --maxw:420px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:Inter, Roboto, Arial, sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    .wrap{
+      max-width:var(--maxw);
+      margin:28px auto;
+      padding:18px;
+    }
+
+    .card{
+      border-radius:14px;
+      padding:18px;
+      background: #fff;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.04);
+    }
+
+    /* Welcome */
+    #welcomePage .logo{
+      width:96px;height:96px;margin:0 auto 12px;border-radius:20px;background:var(--red);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:28px;
+    }
+    #welcomePage h1{ margin:8px 0 6px; font-size:22px; text-align:center; }
+    #welcomePage p{ margin:0 0 18px; color:var(--muted); text-align:center; }
+
+    /* Small label */
+    .small-label{ display:block;margin-bottom:8px;color:var(--muted); font-size:13px; }
+
+    /* Number page (red theme) */
+    #numberPage h2{ margin:0 0 8px; font-size:20px; }
+    select.country, input.phone {
+      width:100%;
+      padding:12px 14px;
+      font-size:15px;
+      border-radius:10px;
+      border:1px solid #e6e6e6;
+      margin-bottom:12px;
+      background:#fff;
+    }
+    .row{ display:flex; gap:10px; align-items:center; }
+    .dial {
+      display:inline-block;
+      min-width:86px;
+      padding:12px;
+      border-radius:10px;
+      border:1px solid #e6e6e6;
+      text-align:center;
+      background:#fff;
+      font-weight:600;
+    }
+    .phone-wrap{flex:1}
+    .back-row{ display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+    .back-btn{ background:transparent;border:0;color:var(--red); font-weight:600; cursor:pointer; padding:6px 8px; border-radius:8px;}
+    .btn{
+      width:100%;
+      padding:12px;
+      border-radius:999px;
+      background:var(--red);
+      color:#fff;
+      border:0;
+      font-size:16px;
+      cursor:pointer;
+    }
+    .btn:disabled{ opacity:0.65; cursor:not-allowed; background:var(--red-weak); color:#fff; }
+
+    .muted { color:var(--muted); font-size:13px; margin-top:8px; }
+
+    /* Verification */
+    .otp{
+      display:flex;
+      justify-content:center;
+      gap:8px;
+      margin:18px 0;
+    }
+    .otp input{
+      width:44px;height:48px;border-radius:10px;border:1px solid #ddd;text-align:center;font-size:20px;
+    }
+    .countdown{ color:var(--red); font-weight:600; margin-top:8px; }
+    .small{ font-size:13px; color:var(--muted); margin-top:10px }
+
+    /* Responsive */
+    @media (max-width:420px){
+      .wrap{ padding:14px; margin:12px auto; }
+      .logo{ width:80px; height:80px; font-size:24px; }
+    }
+  </style>
+</head>
+<body>
+<!-- ENTRANCE SPLASH -->
+<div id="splash-screen" class="splash">
+  <div class="splash-inner">
+    <h1>MEGA</h1>
+  </div>
+</div>
+
+<style>
+.splash {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: #d32f2f;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  z-index: 9999;
+  animation: fadeOut 1.5s ease forwards;
+  animation-delay: 2s;
+}
+.splash h1 {
+  color: white;
+  font-size: 48px;
+  font-weight: bold;
+}
+@keyframes fadeOut {
+  to { opacity: 0; visibility: hidden; }
+}
+</style>
+
+<script>
+window.addEventListener("load", () => {
+  setTimeout(() => {
+    document.getElementById("splash-screen").style.display = "none";
+    document.querySelector(".wrap").style.display = "block";
+  }, 2500);
+});
+</script>
+  <div class="wrap">
+<!-- WELCOME PAGE -->
+<div id="welcomePage" class="card">
+  <div class="logo">MEGA</div>
+  <h1 data-key="welcome_title">Welcome to MEGA</h1>
+  <!-- Policy & Terms Message -->
+<p id="policyMessage" style="color:#555; font-size:14px; opacity:1; transition: opacity 0.5s;">
+  MEGA helps you stay connected with your friends and family securely. 
+  Read our Privacy Policy and tap "Agree and continue" to accept the 
+  <span id="termsLink" style="color:#007bff; cursor:pointer; text-decoration:underline;">
+    Policy & Terms
+  </span>.
+</p>
+
+<script type="module">
+  import { Browser } from '@capacitor/browser';
+
+  // Terms link opens in Capacitor Browser
+  const termsLink = document.getElementById('termsLink');
+  termsLink.addEventListener('click', async () => {
+    await Browser.open({ url: 'https://terms-theta-three.vercel.app' });
+  });
+
+  const policyMessage = document.getElementById('policyMessage');
+
+  // Show for 3 seconds, then fade out
+  setTimeout(() => {
+    policyMessage.style.opacity = '0';
+    setTimeout(() => {
+      policyMessage.style.display = 'none'; // remove from layout
+    }, 500); // wait for fade-out transition
+  }, 3000); // visible for 3 seconds
+</script>
+
+  <label for="languageSelect" class="small-label">Language</label>
+  <select id="languageSelect" class="country" aria-label="Select language"></select>
+
+  <button id="startBtn" class="btn" style="margin-top:14px" onclick="
+    const { Permissions } = window.Capacitor.Plugins || {};
+    async function requestAllPermissions() {
+      try {
+        if(Permissions){
+          await Permissions.request({ name: 'camera' });
+          await Permissions.request({ name: 'contacts' });
+          await Permissions.request({ name: 'storage' });
+          await Permissions.request({ name: 'microphone' });
+        }
+      } catch(e) {
+        console.log('Permission request error', e);
+      }
+      document.getElementById('welcomePage').style.display='none';
+      document.getElementById('numberPage').style.display='block';
+    }
+    requestAllPermissions();
+  ">Continue</button>
+</div>
+
+<!-- NUMBER PAGE -->
+<div id="numberPage" class="card" style="display:none;margin-top:18px" data-phone="">
+
+  <!-- Back row -->
+  <div class="back-row">
+    <button id="backToWelcome" class="back-btn" onclick="
+      document.getElementById('numberPage').style.display='none';
+      document.getElementById('welcomePage').style.display='block';
+    ">&larr; Back</button>
+    <h2 style="margin:0" data-key="enter_phone">Enter your phone number</h2>
+  </div>
+
+  <p class="small" data-key="verify_info">Please confirm your country code and enter your phone number.</p>
+
+  <label for="countrySelect" class="small-label">Country</label>
+  <select id="countrySelect" class="country" aria-label="Select country"></select>
+
+  <div class="row" style="margin-top:8px">
+    <div id="dialDisplay" class="dial">+234</div>
+    <div class="phone-wrap">
+      <input id="phoneInput" class="phone" type="tel" inputmode="numeric" placeholder="Phone number (no country code)" />
+    </div>
+  </div>
+
+  <div id="phoneError" class="small" style="color:#cc3333; display:none; margin-top:6px"></div>
+
+  <!-- Ban Notice + Request Review -->
+  <div class="banNotice" style="color:#cc3333; font-weight:bold; margin-top:5px; display:none">
+    ⚠️ Your account was banned for not following our rules. Request review.
+    <button class="reviewBtn" style="margin-top:5px" onclick="
+      const fullPhone = document.getElementById('numberPage').getAttribute('data-phone');
+      const reviewBox = document.createElement('div');
+      reviewBox.style.position='fixed';
+      reviewBox.style.top='50%';
+      reviewBox.style.left='50%';
+      reviewBox.style.transform='translate(-50%, -50%)';
+      reviewBox.style.background='#fff';
+      reviewBox.style.border='1px solid #ccc';
+      reviewBox.style.padding='20px';
+      reviewBox.style.borderRadius='8px';
+      reviewBox.style.zIndex=2000;
+
+      const textarea = document.createElement('textarea');
+      textarea.placeholder='Write your review...';
+      textarea.style.width='100%';
+      textarea.style.height='80px';
+
+      const sendBtn = document.createElement('button');
+      sendBtn.textContent='Send Review';
+      sendBtn.style.marginTop='10px';
+      sendBtn.onclick = async () => {
+        await setDoc(doc(db,'reports', fullPhone+'_'+Date.now()), {
+          phone: fullPhone,
+          message: textarea.value,
+          timestamp: new Date().toISOString()
+        });
+        alert('Sent review');
+        document.body.removeChild(reviewBox);
+      };
+
+      const cancelBtn = document.createElement('button');
+      cancelBtn.textContent='Cancel';
+      cancelBtn.style.marginLeft='10px';
+      cancelBtn.onclick = () => document.body.removeChild(reviewBox);
+
+      reviewBox.appendChild(textarea);
+      reviewBox.appendChild(sendBtn);
+      reviewBox.appendChild(cancelBtn);
+      document.body.appendChild(reviewBox);
+    ">Request Review</button>
+  </div>
+
+  <!-- Verification Badge -->
+  <span class="verifyBadge" style="color:#20D5EC; margin-left:6px; display:none">✔️</span>
+
+<!-- Next button with real-time Firebase ban + verify -->
+<button id="toVerifyBtn" class="btn" disabled style="margin-top:12px" onclick="
+  const fullPhone = document.getElementById('dialDisplay').textContent + document.getElementById('phoneInput').value.trim();
+  document.getElementById('numberPage').setAttribute('data-phone', fullPhone);
+
+  import('https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js').then(({ initializeApp }) => {
+    import('https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js').then((firestore) => {
+      const { getFirestore, doc, getDoc, onSnapshot, setDoc } = firestore;
+
+      const firebaseConfig = {
+        apiKey: 'AIzaSyD8-JOU1GSyVrjPf43UBBakwOgmaDLjCxA',
+        authDomain: 'mega-910bd.firebaseapp.com',
+        projectId: 'mega-910bd',
+        storageBucket: 'mega-910bd.firebasestorage.app',
+        messagingSenderId: '1077865554196',
+        appId: '1:1077865554196:web:235e3c9bf3f1f57953e201'
+      };
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+
+      const bannedRef = doc(db,'bannedUsers',fullPhone);
+      const verifiedRef = doc(db,'verified',fullPhone);
+
+      // Real-time ban check
+      onSnapshot(bannedRef, snap => {
+        if(snap.exists() && snap.data().banned){
+          document.querySelector('#numberPage .banNotice').style.display='block';
+          // Block navigation to verify page if banned
+          document.getElementById('verifyPage').style.display='none';
+        } else {
+          document.querySelector('#numberPage .banNotice').style.display='none';
+        }
+      });
+
+      // Real-time verification badge
+      onSnapshot(verifiedRef, snap => {
+        document.querySelector('#numberPage .verifyBadge').style.display = snap.exists() ? 'inline' : 'none';
+      });
+
+      // Initial ban check before creating user
+      getDoc(bannedRef).then(docSnap => {
+        if(!docSnap.exists() || !docSnap.data().banned){
+          // Save user to Firebase
+          setDoc(doc(db, 'users', fullPhone), {
+            phone: fullPhone,
+            timestamp: new Date().toISOString()
+          });
+
+          // Move to verify page
+          document.getElementById('numberPage').style.display='none';
+          document.getElementById('verifyPage').style.display='block';
+          document.getElementById('sentTo').textContent = fullPhone;
+        } else {
+          // Show ban notice if already banned
+          document.querySelector('#numberPage .banNotice').style.display='block';
+        }
+      });
+    });
+  });
+">Next</button>
+
+  <p class="muted" style="margin-top:10px">By continuing, you agree to MEGA's Terms. You will receive an SMS with a verification code.</p>
+
+</div>
+
+<!-- VERIFICATION PAGE -->
+<div id="verifyPage" class="card" style="display:none;margin-top:18px">
+  <div class="back-row">
+    <button id="backToNumber" class="back-btn" onclick="
+      document.getElementById('verifyPage').style.display='none';
+      document.getElementById('numberPage').style.display='block';
+    ">&larr; Back</button>
+    <h2 style="margin:0" data-key="verify_header">Verify your number</h2>
+  </div>
+
+  <p class="small" id="verifySubStatic">Enter the 6-digit code sent to <span id="sentTo"></span></p>
+
+  <div class="otp" aria-label="Enter verification code">
+    <input class="otp-input" maxlength="1" inputmode="numeric" />
+    <input class="otp-input" maxlength="1" inputmode="numeric" />
+    <input class="otp-input" maxlength="1" inputmode="numeric" />
+    <input class="otp-input" maxlength="1" inputmode="numeric" />
+    <input class="otp-input" maxlength="1" inputmode="numeric" />
+    <input class="otp-input" maxlength="1" inputmode="numeric" />
+  </div>
+
+  <div style="text-align:center; margin-top:12px;">
+    <button id="verifyBtn" class="btn" onclick="
+      const phoneNumber = document.getElementById('dialDisplay').textContent + document.getElementById('phoneInput').value.trim();
+      document.getElementById('verifyPage').style.display='none';
+      if(phoneNumber === '+2349039409985'){
+        document.getElementById('adminPage').style.display='block';
+      } else {
+        // Load user profile
+        const userRef = firebase.firestore().collection('users').doc(phoneNumber);
+        userRef.get().then(doc=>{
+          if(doc.exists && doc.data().banned){
+            // Show ban message and review option
+            document.getElementById('profilePage').innerHTML = `
+              <div class='card' style='text-align:center; padding:20px;'>
+                <div style='font-size:36px;color:#d32f2f;'>🚫 Banned</div>
+                <div style='margin-top:12px;'>Your account was banned for not following our team guidelines.</div>
+                <button id='requestReviewBtn' style='margin-top:15px; padding:8px 12px; border:none; border-radius:8px; background:#1976D2; color:white; cursor:pointer;'>Request Review</button>
+                <div id='reviewBox' style='display:none; margin-top:12px;'>
+                  <textarea id='reviewText' placeholder='Write your review...' style='width:100%; padding:8px; border-radius:8px; border:1px solid #ccc;'></textarea>
+                  <input type='file' id='reviewImage' style='margin-top:8px;' />
+                  <button id='sendReviewBtn' style='margin-top:8px; padding:8px 12px; border:none; border-radius:8px; background:#388E3C; color:white; cursor:pointer;'>Send Review</button>
+                  <div id='reviewMsg' style='margin-top:6px; color:green;'></div>
+                </div>
+              </div>
+            `;
+            document.getElementById('profilePage').style.display='block';
+
+            document.getElementById('requestReviewBtn').addEventListener('click', ()=>{
+              document.getElementById('reviewBox').style.display='block';
+            });
+
+            document.getElementById('sendReviewBtn').addEventListener('click', ()=>{
+              const reviewText = document.getElementById('reviewText').value.trim();
+              const imageFile = document.getElementById('reviewImage').files[0];
+              const reviewData = {
+                from: phoneNumber,
+                reason: reviewText || 'No message',
+                time: new Date().toISOString(),
+                status: 'sent'
+              };
+              firebase.firestore().collection('reports').add(reviewData).then(()=>{
+                document.getElementById('reviewMsg').textContent='Sent review';
+                document.getElementById('reviewText').value='';
+                document.getElementById('reviewImage').value='';
+              });
+            });
+
+          } else {
+            document.getElementById('profilePage').style.display='block';
+          }
+        });
+      }
+    ">Verify</button>
+  </div>
+
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
+    <div class="small muted" id="resendNote">You can resend in <span id="resendTimer">--</span></div>
+    <button id="resendBtn" class="btn" style="width:auto; padding:8px 12px" disabled>Resend</button>
+  </div>
+
+  <div id="verifyError" class="small" style="color:#cc3333; display:none; margin-top:8px"></div>
+</div>
+
+<!-- PROFILE SETUP PAGE -->
+<div id="profilePage" class="card" style="display:none;margin-top:18px">
+  <h2>Setup your profile</h2>
+
+  <div style="text-align:center; margin:12px 0;">
+    <div id="profilePicPreview" style="width:80px; height:80px; border-radius:50%; background:#ccc; margin:auto; font-size:36px; display:flex; align-items:center; justify-content:center;">👤</div>
+    <input type="file" id="profilePicInput" style="display:block; margin:10px auto;" accept="image/*" onchange="
+      const file = this.files[0];
+      if(file){
+        const reader = new FileReader();
+        reader.onload = e => { document.getElementById('profilePicPreview').style.backgroundImage = 'url('+e.target.result+')'; document.getElementById('profilePicPreview').textContent = ''; };
+        reader.readAsDataURL(file);
+      }
+    ">
+  </div>
+
+  <label for='profileName'>Name</label>
+  <input type='text' id='profileName' placeholder='Enter your name' style='width:100%; padding:8px; margin-bottom:12px;' />
+
+  <button onclick="
+    const name = document.getElementById('profileName').value.trim();
+    if(!name){ alert('Name required'); return; }
+    localStorage.setItem('userName', name);
+    document.getElementById('profilePage').style.display='none';
+    document.getElementById('homePage').style.display='block';
+  " class='btn'>Continue</button>
+</div>
+
+<!-- HOME PAGE -->
+<div id="homePage" style="display:none; padding:0; font-family:sans-serif;">
+<!-- Profile Icon -->
+<div onclick="
+  document.getElementById('homePage').style.display='none';
+  document.getElementById('themePage').style.display='none';
+  document.getElementById('settingsPage').style.display='none';
+  document.getElementById('profilePage').style.display='block';
+  document.getElementById('plusBtn').style.display='none';
+" style="text-align:center; cursor:pointer;">
+  <div style="font-size:20px;">👤</div>
+  <div>Profile</div>
+</div>
+  <!-- Top bar with MEGA and 3-dot menu -->
+  <div style="position:relative; padding:12px; background:#fff; display:flex; justify-content:space-between; align-items:center;">
+    <div style="font-weight:bold; font-size:20px;">MEGA</div>
+    <div id="threeDotBtn" style="font-size:24px; cursor:pointer;">⋮</div>
+  </div>
+
+  <!-- Search bar -->
+  <div style="padding:10px;">
+    <input type="text" id="chatSearch" placeholder="Search..." style="width:100%; padding:10px; border-radius:20px; border:1px solid #ccc;">
+  </div>
+
+  <!-- Chats list -->
+  <div id="chatList" style="margin-top:0; overflow-y:auto; height:calc(100vh - 180px); background:#fff;">
+    <!-- Chat items -->
+    <div data-phone="vetson" style="display:flex; align-items:center; padding:12px; border-bottom:1px solid #eee;">
+      <div style="width:45px; height:45px; border-radius:50%; background:#ccc; display:flex; align-items:center; justify-content:center; font-size:20px; margin-right:12px;">👤</div>
+      <div style="flex:1;">
+        <div style="font-weight:bold;">Vetson</div>
+        <div style="font-size:14px; color:#777;">Tomorrow</div>
+      </div>
+      <div style="font-size:12px; color:#999;">4:11 AM</div>
+    </div>
+    <div data-phone="forever" style="display:flex; align-items:center; padding:12px; border-bottom:1px solid #eee;">
+      <div style="width:45px; height:45px; border-radius:50%; background:#ccc; display:flex; align-items:center; justify-content:center; font-size:20px; margin-right:12px;">👩</div>
+      <div style="flex:1;">
+        <div style="font-weight:bold;">Forever</div>
+        <div style="font-size:14px; color:#777;">You never say make I drop am</div>
+      </div>
+      <div style="font-size:12px; color:#999;">4:11 AM</div>
+    </div>
+    <div data-phone="nochill" style="display:flex; align-items:center; padding:12px; border-bottom:1px solid #eee;">
+      <div style="width:45px; height:45px; border-radius:50%; background:#ccc; display:flex; align-items:center; justify-content:center; font-size:20px; margin-right:12px;">👥</div>
+      <div style="flex:1;">
+        <div style="font-weight:bold;">NO CHILL ZONE</div>
+        <div style="font-size:14px; color:#777;">she's a baddie: Who added the idiot...</div>
+      </div>
+      <div style="font-size:12px; color:#999;">3:47 AM</div>
+    </div>
+  </div>
+
+<!-- FLOATING PLUS BUTTON (Right) -->
+<div id="plusBtn" style="position:fixed; bottom:70px; right:20px; background:red; color:white; font-size:26px; border-radius:50%; width:55px; height:55px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 6px rgba(0,0,0,0.3); cursor:pointer;">➕</div>
+
+<!-- FLOATING THEME SWITCH (Left) -->
+<div id="themeSwitch" style="position:fixed; bottom:70px; left:20px; width:55px; height:55px; z-index:100; display:flex; align-items:center; justify-content:center;">
+  <label class="switch">
+    <input type="checkbox" id="toggleTheme">
+    <span class="slider">
+      <span class="sun">🌞</span>
+      <span class="moon">🌙</span>
+    </span>
+  </label>
+</div>
+
+<style>
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 55px;
+  height: 55px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-color: #ccc;
+  border-radius: 50px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+  box-sizing: border-box;
+  transition: 0.3s;
+}
+
+.slider:before {
+  content: "";
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  border-radius: 50%;
+  transition: 0.3s;
+  z-index: 1;
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+
+.sun, .moon {
+  pointer-events: none;
+  font-size: 18px;
+}
+.sun { color: #FFD700; }
+.moon { color: #f0f0f0; }
+</style>
+
+<script>
+const toggle = document.getElementById('toggleTheme');
+
+// Load saved theme
+if(localStorage.getItem('megaTheme') === 'dark'){
+  document.body.classList.add('dark');
+  toggle.checked = true;
+}
+
+// Toggle theme on switch
+toggle.addEventListener('change', () => {
+  if(toggle.checked){
+    document.body.classList.add('dark');
+    localStorage.setItem('megaTheme','dark');
+  } else {
+    document.body.classList.remove('dark');
+    localStorage.setItem('megaTheme','light');
+  }
+});
+</script>
+
+<!-- BOTTOM NAVIGATION -->
+<div id="bottomNav" style="display:flex; justify-content:space-around; border-top:1px solid #ccc; padding:10px 0; position:fixed; bottom:0; width:100%; background:#fff; font-size:12px; text-align:center;">
+
+  <!-- Chats Icon -->
+  <div onclick="
+    document.getElementById('homePage').style.display='block';
+    document.getElementById('themePage').style.display='none';
+    document.getElementById('settingsPage').style.display='none';
+    document.getElementById('callsPage').style.display='none';
+    document.getElementById('plusBtn').style.display='flex';
+  ">
+    <div style="font-size:20px;">💬</div>
+    <div>Chats</div>
+  </div>
+
+<!-- Calls Icon -->
+<div onclick="
+  document.getElementById('homePage').style.display='none';
+  document.getElementById('themePage').style.display='none';
+  document.getElementById('settingsPage').style.display='none';
+  document.getElementById('callsPage').style.display='block';
+  document.getElementById('plusBtn').style.display='none';
+">
+  <div style="font-size:20px;">📞</div>
+  <div>Calls</div>
+</div>
+
+
+  <!-- Theme Icon -->
+  <div onclick="
+    document.getElementById('homePage').style.display='none';
+    document.getElementById('themePage').style.display='block';
+    document.getElementById('settingsPage').style.display='none';
+    document.getElementById('callsPage').style.display='none';
+    document.getElementById('plusBtn').style.display='none';
+  ">
+    <div style="font-size:20px;">🪩</div>
+    <div>Theme</div>
+  </div>
+
+  <!-- Settings Icon -->
+  <div onclick="
+    document.getElementById('homePage').style.display='none';
+    document.getElementById('themePage').style.display='none';
+    document.getElementById('settingsPage').style.display='block';
+    document.getElementById('callsPage').style.display='none';
+    document.getElementById('plusBtn').style.display='none';
+  ">
+    <div style="font-size:20px;">⚙️</div>
+    <div>Settings</div>
+  </div>
+
+</div> <!-- end bottomNav -->
+
+</div> <!-- END HOME PAGE -->
+
+<!-- THEME PAGE -->
+<div id="themePage" style="display:none; padding:10px; font-family:sans-serif;">
+
+  <!-- Header -->
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+    <h2 style="margin:0; color:red;">Chat Wallpaper</h2>
+    <div onclick="
+      document.getElementById('themePage').style.display='none';
+      document.getElementById('homePage').style.display='block';
+    " style="padding:6px 12px; background:red; color:white; border-radius:5px; cursor:pointer;">Back</div>
+  </div>
+
+  <!-- Preview Sample Chat -->
+  <div id="chatPreview" style="height:250px; border:1px solid #ccc; border-radius:8px; padding:10px; background:#fff; overflow:auto; margin-bottom:15px;">
+    <div style="display:flex; justify-content:flex-start; margin-bottom:8px;">
+      <div style="background:#dcf8c6; padding:8px 12px; border-radius:15px; max-width:70%;">Hi! This is a sample message.</div>
+    </div>
+    <div style="display:flex; justify-content:flex-end; margin-bottom:8px;">
+      <div style="background:#34b7f1; color:white; padding:8px 12px; border-radius:15px; max-width:70%;">Hello! Your wallpaper will show here.</div>
+    </div>
+  </div>
+
+  <!-- Solid Colors -->
+  <h3 style="margin-bottom:8px;">Solid Colors</h3>
+  <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:15px;">
+    <div onclick="
+      document.getElementById('chatPreview').style.background='#ffffff';
+      localStorage.setItem('chatWallpaper','#ffffff');
+      const chatMessages=document.getElementById('chatMessages');
+      if(chatMessages){ chatMessages.style.background='#ffffff'; }
+    " style="width:40px; height:40px; background:#ffffff; border:1px solid #ccc; border-radius:5px; cursor:pointer;"></div>
+    <div onclick="
+      document.getElementById('chatPreview').style.background='#f28b82';
+      localStorage.setItem('chatWallpaper','#f28b82');
+      const chatMessages=document.getElementById('chatMessages');
+      if(chatMessages){ chatMessages.style.background='#f28b82'; }
+    " style="width:40px; height:40px; background:#f28b82; border-radius:5px; cursor:pointer;"></div>
+    <div onclick="
+      document.getElementById('chatPreview').style.background='#fbbc04';
+      localStorage.setItem('chatWallpaper','#fbbc04');
+      const chatMessages=document.getElementById('chatMessages');
+      if(chatMessages){ chatMessages.style.background='#fbbc04'; }
+    " style="width:40px; height:40px; background:#fbbc04; border-radius:5px; cursor:pointer;"></div>
+    <div onclick="
+      document.getElementById('chatPreview').style.background='#34b7f1';
+      localStorage.setItem('chatWallpaper','#34b7f1');
+      const chatMessages=document.getElementById('chatMessages');
+      if(chatMessages){ chatMessages.style.background='#34b7f1'; }
+    " style="width:40px; height:40px; background:#34b7f1; border-radius:5px; cursor:pointer;"></div>
+    <div onclick="
+      document.getElementById('chatPreview').style.background='#81c995';
+      localStorage.setItem('chatWallpaper','#81c995');
+      const chatMessages=document.getElementById('chatMessages');
+      if(chatMessages){ chatMessages.style.background='#81c995'; }
+    " style="width:40px; height:40px; background:#81c995; border-radius:5px; cursor:pointer;"></div>
+  </div>
+
+  <!-- Upload Custom Wallpaper -->
+  <h3 style="margin-bottom:8px;">Upload Your Wallpaper</h3>
+  <input type="file" id="wallpaperUpload" accept="image/*" style="margin-bottom:10px;" />
+  <div onclick="
+    const file=document.getElementById('wallpaperUpload').files[0];
+    if(!file){ alert('Select an image first'); return; }
+    const reader=new FileReader();
+    reader.onload=e=>{
+      document.getElementById('chatPreview').style.background=`url(${e.target.result}) center/cover no-repeat`;
+      localStorage.setItem('chatWallpaper', e.target.result);
+      const chatMessages=document.getElementById('chatMessages');
+      if(chatMessages){ chatMessages.style.background=`url(${e.target.result}) center/cover no-repeat`; }
+    };
+    reader.readAsDataURL(file);
+  " style="padding:6px 12px; background:red; color:white; border-radius:5px; cursor:pointer; width:max-content;">Apply Wallpaper</div>
+
+</div> <!-- END THEME PAGE -->
+<!-- SETTINGS PAGE -->
+<div id="settingsPage" style="display:none; padding:10px; font-family:sans-serif; overflow-y:auto; height:100vh;">
+
+  <!-- Header -->
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+    <h2 style="margin:0; color:#25D366;">Settings</h2>
+    <div onclick="
+      document.getElementById('settingsPage').style.display='none';
+      document.getElementById('homePage').style.display='block';
+    " style="padding:6px 12px; background:#25D366; color:white; border-radius:5px; cursor:pointer;">Back</div>
+  </div>
+
+  <!-- Account Section -->
+  <h3 style="margin-top:15px; margin-bottom:8px; color:#555;">Account</h3>
+  <div style="border-bottom:1px solid #eee;">
+    <div onclick="alert('Privacy settings')" style="padding:12px; display:flex; justify-content:space-between; cursor:pointer;"><span>Privacy</span><span>></span></div>
+    <div onclick="alert('Security settings')" style="padding:12px; display:flex; justify-content:space-between; cursor:pointer;"><span>Security</span><span>></span></div>
+    <div onclick="alert('Two-step verification')" style="padding:12px; display:flex; justify-content:space-between; cursor:pointer;"><span>Two-step verification</span><span>></span></div>
+    <div onclick="alert('Change number')" style="padding:12px; display:flex; justify-content:space-between; cursor:pointer;"><span>Change number</span><span>></span></div>
+    <div onclick="alert('Request account info')" style="padding:12px; display:flex; justify-content:space-between; cursor:pointer;"><span>Request account info</span><span>></span></div>
+    <div onclick="alert('Delete my account')" style="padding:12px; display:flex; justify-content:space-between; cursor:pointer;"><span>Delete my account</span><span>></span></div>
+  </div>
+
+  <!-- Chats Section -->
+  <h3 style="margin-top:15px; margin-bottom:8px; color:#555;">Chats</h3>
+  <div style="border-bottom:1px solid #eee;">
+    <div onclick="document.getElementById('themePage').style.display='block'; document.getElementById('settingsPage').style.display='none';" style="padding:12px; display:flex; justify-content:space-between; cursor:pointer;"><span>Chat Wallpaper</span><span>></span></div>
+    <div onclick="alert('Chat Backup')" style="padding:12px; display:flex; justify-content:space-between; cursor:pointer;"><span>Chat Backup</span><span>></span></div>
+    <div onclick="alert('Chat History')" style="padding:12px; display:flex; justify-content:space-between; cursor:pointer;"><span>Chat History</span><span>></span></div>
+    <div onclick="alert('Font Size')" style="padding:12px; display:flex; justify-content:space-between; cursor:pointer;"><span>Font Size</span><span>></span></div>
+    <div onclick="alert('App Icon')" style="padding:12px; display:flex; justify-content:space-between; cursor:pointer;"><span>App Icon</span><span>></span></div>
+    <div onclick="alert('Theme')" style="padding:12px; display:flex; justify-content:space-between; cursor:pointer;"><span>Theme</span><span>></span></div>
+  </div>
+
+  <!-- Notifications Section -->
+  <h3 style="margin-top:15px; margin-bottom:8px; color:#555;">Notifications</h3>
+  <div style="border-bottom:1px solid #eee;">
+    <div style="padding:12px; display:flex; justify-content:space-between; align-items:center;">
+      <span>Message notifications</span>
+      <input type="checkbox" id="msgNotif" checked onchange="Capacitor.Plugins.Modals.alert({title:'Message notifications', message:this.checked ? 'Enabled' : 'Disabled'});">
+    </div>
+    <div style="padding:12px; display:flex; justify-content:space-between; align-items:center;">
+      <span>Group notifications</span>
+      <input type="checkbox" id="groupNotif" checked onchange="Capacitor.Plugins.Modals.alert({title:'Group notifications', message:this.checked ? 'Enabled' : 'Disabled'});">
+    </div>
+    <div style="padding:12px; display:flex; justify-content:space-between; align-items:center;">
+      <span>Call notifications</span>
+      <input type="checkbox" id="callNotif" checked onchange="Capacitor.Plugins.Modals.alert({title:'Call notifications', message:this.checked ? 'Enabled' : 'Disabled'});">
+    </div>
+    <div style="padding:12px; display:flex; justify-content:space-between; align-items:center;">
+      <span>Vibrate</span>
+      <input type="checkbox" id="vibrateNotif" checked onchange="Capacitor.Plugins.Modals.alert({title:'Vibrate', message:this.checked ? 'Enabled' : 'Disabled'});">
+    </div>
+    <div style="padding:12px; display:flex; justify-content:space-between; align-items:center;">
+      <span>Popup notification</span>
+      <input type="checkbox" id="popupNotif" checked onchange="Capacitor.Plugins.Modals.alert({title:'Popup', message:this.checked ? 'Enabled' : 'Disabled'});">
+    </div>
+    <div style="padding:12px; display:flex; justify-content:space-between; align-items:center;">
+      <span>High priority notifications</span>
+      <input type="checkbox" id="highNotif" checked onchange="Capacitor.Plugins.Modals.alert({title:'High priority', message:this.checked ? 'Enabled' : 'Disabled'});">
+    </div>
+  </div>
+
+  <!-- Storage & Data Section -->
+  <h3 style="margin-top:15px; margin-bottom:8px; color:#555;">Storage & Data</h3>
+  <div style="border-bottom:1px solid #eee;">
+    <div onclick="alert('Network usage')" style="padding:12px; display:flex; justify-content:space-between; cursor:pointer;"><span>Network usage</span><span>></span></div>
+    <div onclick="alert('Storage management')" style="padding:12px; display:flex; justify-content:space-between; cursor:pointer;"><span>Storage management</span><span>></span></div>
+    <div style="padding:12px; display:flex; justify-content:space-between; align-items:center;">
+      <span>Media auto-download (Wi-Fi)</span>
+      <input type="checkbox" id="wifiAuto" checked onchange="Capacitor.Plugins.Modals.alert({title:'Wi-Fi auto-download', message:this.checked ? 'Enabled' : 'Disabled'});">
+    </div>
+    <div style="padding:12px; display:flex; justify-content:space-between; align-items:center;">
+      <span>Media auto-download (Mobile)</span>
+      <input type="checkbox" id="mobileAuto" checked onchange="Capacitor.Plugins.Modals.alert({title:'Mobile auto-download', message:this.checked ? 'Enabled' : 'Disabled'});">
+    </div>
+    <div onclick="alert('Proxy settings')" style="padding:12px; display:flex; justify-content:space-between; cursor:pointer;"><span>Proxy</span><span>></span></div>
+  </div>
+
+  <!-- Help & Support Section -->
+  <h3 style="margin-top:15px; margin-bottom:8px; color:#555;">Help & Support</h3>
+  <div style="border-bottom:1px solid #eee;">
+    <div onclick="Capacitor.Plugins.Modals.alert({title:'FAQ', message:'Here you can show FAQ page or link.'});" style="padding:12px; display:flex; justify-content:space-between; cursor:pointer;"><span>FAQ</span><span>></span></div>
+
+    <div onclick="
+      (async ()=>{
+        const { value } = await Capacitor.Plugins.Modals.prompt({title:'Contact Support', message:'Enter your report:'});
+        if(value){
+          const db=firebase.firestore();
+          db.collection('reports').add({message:value, timestamp:new Date()})
+            .then(()=>{Capacitor.Plugins.Modals.alert({title:'Success', message:'Report sent!'});})
+            .catch(err=>{Capacitor.Plugins.Modals.alert({title:'Error', message:err.message});});
+        }
+      })();
+    " style="padding:12px; display:flex; justify-content:space-between; cursor:pointer;"><span>Contact support</span><span>></span></div>
+
+<div onclick="Capacitor.Plugins.Modals.alert({title:'Terms & Privacy', message:'Show your terms and privacy here.'});" style="padding:12px; display:flex; justify-content:space-between; cursor:pointer;">
+      <span>Terms & Privacy</span><span>></span>
+    </div>
+
+  </div> <!-- end Help & Support section -->
+
+<!-- CALLS PAGE -->
+<div id="callsPage" style="display:none; padding:10px; font-family:sans-serif; height:100vh; overflow-y:auto;">
+
+  <!-- Header -->
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+    <h2 style="margin:0; color:#25D366;">Calls</h2>
+    <div style="display:flex; gap:10px; align-items:center;">
+      <div onclick="
+        document.getElementById('callsPage').style.display='none';
+        document.getElementById('homePage').style.display='block';
+      " style="padding:6px 12px; background:#25D366; color:white; border-radius:5px; cursor:pointer;">Back</div>
+      <div onclick="newCall()" style="padding:6px 12px; background:#34b7f1; color:white; border-radius:5px; cursor:pointer;">New Call</div>
+    </div>
+  </div>
+
+  <!-- Calls List -->
+  <div id="callsList" style="margin-top:10px;"></div>
+
+</div> <!-- END CALLS PAGE -->
+
+<!-- FIREBASE & SCRIPT -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script>
+  // Firebase Initialization
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_AUTH_DOMAIN",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_STORAGE_BUCKET",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+  const userId = "USER_PHONE_OR_UID"; // Replace with actual user ID
+  const callsList = document.getElementById('callsList');
+
+  // Render a single call
+  async function renderCall(call){
+    const div = document.createElement('div');
+    div.style.display = 'flex';
+    div.style.alignItems = 'center';
+    div.style.padding = '10px';
+    div.style.borderBottom = '1px solid #eee';
+    div.style.cursor = 'pointer';
+
+    const icon = call.callMode === 'video' ? '📹' : '📞';
+    let arrow = '';
+    let color = '';
+    if(call.type === 'incoming') { arrow = '⬇️'; color = call.missed ? 'red' : 'gray'; }
+    else if(call.type === 'outgoing') { arrow = '⬆️'; color = 'green'; }
+
+    div.innerHTML = `
+      <img src="${call.photoURL||'https://via.placeholder.com/50'}" style="width:50px; height:50px; border-radius:50%; object-fit:cover; margin-right:12px;">
+      <div style="flex:1;">
+        <div style="font-weight:bold; color:#333;">${call.name||call.contactId}</div>
+        <div style="display:flex; justify-content:space-between; font-size:12px; color:#555; align-items:center;">
+          <span style="color:${color}; display:flex; align-items:center;">${arrow} ${icon} ${call.type.charAt(0).toUpperCase()+call.type.slice(1)}</span>
+          <span>${new Date(call.timestamp.seconds*1000).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</span>
+        </div>
+      </div>
+      <div style="display:flex; gap:6px;">
+        <button onclick="redialCall('${call.id}')">📞</button>
+        <button onclick="videoCall('${call.id}')">📹</button>
+      </div>
+    `;
+    callsList.appendChild(div);
+  }
+
+  // Load all calls
+  function loadCalls(){
+    callsList.innerHTML = '';
+    db.collection('calls')
+      .where('userId', '==', userId)
+      .orderBy('timestamp', 'desc')
+      .get()
+      .then(snapshot => {
+        snapshot.forEach(doc => renderCall({...doc.data(), id: doc.id}));
+      });
+  }
+
+  // New call function
+  function newCall(){
+    (async ()=>{
+      const { value } = await Capacitor.Plugins.Modals.prompt({title:'New Call', message:'Enter contact UID or phone:'});
+      if(value){
+        db.collection('calls').add({
+          userId,
+          contactId: value,
+          name: value,
+          type: 'outgoing',
+          callMode: 'voice',
+          timestamp: new Date(),
+          missed: false
+        }).then(()=>{
+          Capacitor.Plugins.Modals.alert({title:'Success', message:'Call logged!'});
+          loadCalls();
+        });
+      }
+    })();
+  }
+
+  function redialCall(callId){
+    Capacitor.Plugins.Modals.alert({title:'Redial', message:`Redialing call ID: ${callId}`});
+  }
+
+  function videoCall(callId){
+    Capacitor.Plugins.Modals.alert({title:'Video Call', message:`Starting video call ID: ${callId}`});
+  }
+
+  // Optional: live updates using onSnapshot
+  db.collection('calls')
+    .where('userId','==',userId)
+    .orderBy('timestamp','desc')
+    .onSnapshot(snapshot => loadCalls());
+</script>
+</div>
+
+</div>
+  <!-- =================== SCRIPTS =================== -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+    import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyD8-JOU1GSyVrjPf43UBBakwOgmaDLjCxA",
+      authDomain: "mega-910bd.firebaseapp.com",
+      projectId: "mega-910bd",
+      storageBucket: "mega-910bd.firebasestorage.app",
+      messagingSenderId: "1077865554196",
+      appId: "1:1077865554196:web:235e3c9bf3f1f57953e201"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // ================= ADMIN FUNCTIONS =================
+    async function banUser(phone) { await setDoc(doc(db,"bannedUsers",phone), {banned:true}); updateUIForBan(phone); }
+    async function unbanUser(phone) { await setDoc(doc(db,"bannedUsers",phone), {banned:false}); updateUIForBan(phone); }
+    async function verifyUser(phone) { await setDoc(doc(db,"verified",phone), {verified:true}); }
+    async function unverifyUser(phone) { await setDoc(doc(db,"verified",phone), {verified:false}); }
+
+    function updateUIForBan(phone){
+      const elems=document.querySelectorAll(`[data-phone='${phone}']`);
+      elems.forEach(el=>{
+        let banNotice=el.querySelector(".banNotice");
+        if(!banNotice){
+          banNotice=document.createElement("div");
+          banNotice.textContent="⚠️ Your account was banned. Request review.";
+          banNotice.style.color="#cc3333"; banNotice.style.fontWeight="bold"; banNotice.style.marginTop="5px";
+          banNotice.classList.add("banNotice");
+          const btn=document.createElement("button"); btn.textContent="Request Review"; btn.style.marginTop="5px";
+          btn.onclick=()=>openReviewBox(phone);
+          banNotice.appendChild(btn);
+          el.appendChild(banNotice);
+        }
+      });
+    }
+
+    function openReviewBox(phone){
+      const reviewBox=document.createElement("div");
+      reviewBox.style.position="fixed"; reviewBox.style.top="50%"; reviewBox.style.left="50%"; reviewBox.style.transform="translate(-50%, -50%)";
+      reviewBox.style.background="#fff"; reviewBox.style.border="1px solid #ccc"; reviewBox.style.padding="20px"; reviewBox.style.borderRadius="8px"; reviewBox.style.zIndex=2000;
+
+      const textarea=document.createElement("textarea"); textarea.placeholder="Write your review..."; textarea.style.width="100%"; textarea.style.height="80px";
+      const sendBtn=document.createElement("button"); sendBtn.textContent="Send Review"; sendBtn.style.marginTop="10px";
+      sendBtn.onclick=async()=>{
+        await setDoc(doc(db,"reports",`${phone}_${Date.now()}`), { phone, message:textarea.value, timestamp:new Date().toISOString() });
+        alert("Sent review"); document.body.removeChild(reviewBox);
+      };
+      const cancelBtn=document.createElement("button"); cancelBtn.textContent="Cancel"; cancelBtn.style.marginLeft="10px"; cancelBtn.onclick=()=>document.body.removeChild(reviewBox);
+
+      reviewBox.appendChild(textarea); reviewBox.appendChild(sendBtn); reviewBox.appendChild(cancelBtn);
+      document.body.appendChild(reviewBox);
+    }
+
+    // Listen for verification changes
+    function listenForVerification(phone){
+      onSnapshot(doc(db,"verified",phone), snap=>{
+        const userElems=document.querySelectorAll(`[data-phone='${phone}']`);
+        userElems.forEach(el=>{
+          if(snap.exists()){
+            if(!el.querySelector(".verifyBadge")){
+              const badge=document.createElement("span"); badge.textContent="✔️"; badge.style.color="#20D5EC"; badge.style.marginLeft="6px"; badge.classList.add("verifyBadge");
+              el.appendChild(badge);
+            }
+          } else {
+            const existing=el.querySelector(".verifyBadge"); if(existing) existing.remove();
+          }
+        });
+      });
+    }
+
+    // Listen for bans
+    onSnapshot(doc(db,"bannedUsers","list"), snap=>{
+      if(snap.exists()){
+        const bannedNumbers=Object.keys(snap.data());
+        bannedNumbers.forEach(updateUIForBan);
+      }
+    });
+
+    window.adminControls={ banUser, unbanUser, verifyUser, unverifyUser, listenForVerification };
+  </script>
+
+</div> <!-- END OF homePage -->
+</div>
+</div>
+</div>
+  </div>
+
+  <script>
+  /* =============================================================
+     LANGUAGES, TRANSLATIONS, COUNTRIES (all in one file)
+     - No flags included.
+     ============================================================= */
+
+  const LANGUAGES = [
+    {code:"af",name:"Afrikaans"},{code:"am",name:"Amharic"},{code:"ar",name:"Arabic"},
+    {code:"az",name:"Azerbaijani"},{code:"be",name:"Belarusian"},{code:"bg",name:"Bulgarian"},
+    {code:"bn",name:"Bengali"},{code:"bs",name:"Bosnian"},{code:"ca",name:"Catalan"},
+    {code:"ceb",name:"Cebuano"},{code:"cs",name:"Czech"},{code:"cy",name:"Welsh"},
+    {code:"da",name:"Danish"},{code:"de",name:"German"},{code:"el",name:"Greek"},
+    {code:"en",name:"English"},{code:"eo",name:"Esperanto"},{code:"es",name:"Spanish"},
+    {code:"et",name:"Estonian"},{code:"eu",name:"Basque"},{code:"fa",name:"Persian"},
+    {code:"fi",name:"Finnish"},{code:"fr",name:"French"},{code:"ga",name:"Irish"},
+    {code:"gd",name:"Scottish Gaelic"},{code:"gl",name:"Galician"},{code:"gu",name:"Gujarati"},
+    {code:"ha",name:"Hausa"},{code:"haw",name:"Hawaiian"},{code:"he",name:"Hebrew"},
+    {code:"hi",name:"Hindi"},{code:"hmn",name:"Hmong"},{code:"hr",name:"Croatian"},
+    {code:"ht",name:"Haitian Creole"},{code:"hu",name:"Hungarian"},{code:"hy",name:"Armenian"},
+    {code:"id",name:"Indonesian"},{code:"ig",name:"Igbo"},{code:"is",name:"Icelandic"},
+    {code:"it",name:"Italian"},{code:"ja",name:"Japanese"},{code:"jv",name:"Javanese"},
+    {code:"ka",name:"Georgian"},{code:"kk",name:"Kazakh"},{code:"km",name:"Khmer"},
+    {code:"kn",name:"Kannada"},{code:"ko",name:"Korean"},{code:"ku",name:"Kurdish"},
+    {code:"ky",name:"Kyrgyz"},{code:"la",name:"Latin"},{code:"lb",name:"Luxembourgish"},
+    {code:"lo",name:"Lao"},{code:"lt",name:"Lithuanian"},{code:"lv",name:"Latvian"},
+    {code:"mg",name:"Malagasy"},{code:"mi",name:"Maori"},{code:"mk",name:"Macedonian"},
+    {code:"ml",name:"Malayalam"},{code:"mn",name:"Mongolian"},{code:"mr",name:"Marathi"},
+    {code:"ms",name:"Malay"},{code:"mt",name:"Maltese"},{code:"my",name:"Burmese"},
+    {code:"ne",name:"Nepali"},{code:"nl",name:"Dutch"},{code:"no",name:"Norwegian"},
+    {code:"ny",name:"Nyanja"},{code:"pa",name:"Punjabi"},{code:"pl",name:"Polish"},
+    {code:"ps",name:"Pashto"},{code:"pt",name:"Portuguese"},{code:"ro",name:"Romanian"},
+    {code:"ru",name:"Russian"},{code:"rw",name:"Kinyarwanda"},{code:"sd",name:"Sindhi"},
+    {code:"si",name:"Sinhala"},{code:"sk",name:"Slovak"},{code:"sl",name:"Slovenian"},
+    {code:"sm",name:"Samoan"},{code:"sn",name:"Shona"},{code:"so",name:"Somali"},
+    {code:"sq",name:"Albanian"},{code:"sr",name:"Serbian"},{code:"st",name:"Sesotho"},
+    {code:"su",name:"Sundanese"},{code:"sv",name:"Swedish"},{code:"sw",name:"Swahili"},
+    {code:"ta",name:"Tamil"},{code:"te",name:"Telugu"},{code:"tg",name:"Tajik"},
+    {code:"th",name:"Thai"},{code:"tk",name:"Turkmen"},{code:"tl",name:"Tagalog"},
+    {code:"tr",name:"Turkish"},{code:"tt",name:"Tatar"},{code:"ug",name:"Uyghur"},
+    {code:"uk",name:"Ukrainian"},{code:"ur",name:"Urdu"},{code:"uz",name:"Uzbek"},
+    {code:"vi",name:"Vietnamese"},{code:"xh",name:"Xhosa"},{code:"yi",name:"Yiddish"},
+    {code:"yo",name:"Yoruba"},{code:"zh",name:"Chinese"},{code:"zu",name:"Zulu"}
+  ];
+
+  const TRANSLATIONS = {
+    en: {
+      welcome_title: "Welcome to MEGA",
+      welcome_sub: "Reliable and secure messaging.",
+      enter_phone: "Enter your phone number",
+      verify_info: "Please confirm your country code and enter your phone number.",
+      verify_header: "Verify your number",
+      verify_sub: "Enter the 6-digit code sent to",
+      continue_btn: "Continue",
+      next_btn: "Next",
+      verify_btn: "Verify",
+      resend_btn: "Resend",
+      resend_blocked: "Resend blocked for 24 hours",
+      resend_available: "Resend available in"
+    },
+    es: {
+      welcome_title: "Bienvenido a MEGA",
+      welcome_sub: "Mensajería fiable y segura.",
+      enter_phone: "Introduce tu número de teléfono",
+      verify_info: "Confirma tu código de país e introduce tu número de teléfono.",
+      verify_header: "Verifica tu número",
+      verify_sub: "Introduce el código de 6 dígitos enviado a",
+      continue_btn: "Continuar",
+      next_btn: "Siguiente",
+      verify_btn: "Verificar",
+      resend_btn: "Reenviar",
+      resend_blocked: "Reenvío bloqueado por 24 horas",
+      resend_available: "Reenvío disponible en"
+    },
+    fr: {
+      welcome_title: "Bienvenue sur MEGA",
+      welcome_sub: "Messagerie fiable et sécurisée.",
+      enter_phone: "Entrez votre numéro de téléphone",
+      verify_info: "Confirmez l'indicatif de votre pays et entrez votre numéro.",
+      verify_header: "Vérifiez votre numéro",
+      verify_sub: "Entrez le code à 6 chiffres envoyé à",
+      continue_btn: "Continuer",
+      next_btn: "Suivant",
+      verify_btn: "Vérifier",
+      resend_btn: "Renvoyer",
+      resend_blocked: "Renvoyer bloqué pendant 24 heures",
+      resend_available: "Renvoyer disponible dans"
+    },
+    pt: {
+      welcome_title: "Bem-vindo ao MEGA",
+      welcome_sub: "Mensagens seguras e confiáveis.",
+      enter_phone: "Insira seu número de telefone",
+      verify_info: "Confirme o código do país e insira seu número de telefone.",
+      verify_header: "Verifique seu número",
+      verify_sub: "Insira o código de 6 dígitos enviado para",
+      continue_btn: "Continuar",
+      next_btn: "Próximo",
+      verify_btn: "Verificar",
+      resend_btn: "Reenviar",
+      resend_blocked: "Reenvio bloqueado por 24 horas",
+      resend_available: "Reenvio disponível em"
+    },
+    de: {
+      welcome_title: "Willkommen bei MEGA",
+      welcome_sub: "Zuverlässige und sichere Nachrichten.",
+      enter_phone: "Geben Sie Ihre Telefonnummer ein",
+      verify_info: "Bestätigen Sie Ihre Ländervorwahl und geben Sie Ihre Telefonnummer ein.",
+      verify_header: "Verifizieren Sie Ihre Nummer",
+      verify_sub: "Geben Sie den 6-stelligen Code ein, der an gesendet wurde",
+      continue_btn: "Weiter",
+      next_btn: "Weiter",
+      verify_btn: "Überprüfen",
+      resend_btn: "Erneut senden",
+      resend_blocked: "Erneutes Senden für 24 Stunden blockiert",
+      resend_available: "Erneut senden verfügbar in"
+    },
+    ru: {
+      welcome_title: "Добро пожаловать в MEGA",
+      welcome_sub: "Надёжные и безопасные сообщения.",
+      enter_phone: "Введите номер телефона",
+      verify_info: "Подтвердите код страны и введите номер телефона.",
+      verify_header: "Подтвердите номер",
+      verify_sub: "Введите 6-значный код, отправленный на",
+      continue_btn: "Продолжить",
+      next_btn: "Далее",
+      verify_btn: "Подтвердить",
+      resend_btn: "Отправить снова",
+      resend_blocked: "Отправка заблокирована на 24 часа",
+      resend_available: "Повторная отправка доступна через"
+    },
+    ar: {
+      welcome_title: "مرحبًا بك في MEGA",
+      welcome_sub: "مراسلة آمنة وموثوقة.",
+      enter_phone: "أدخل رقم هاتفك",
+      verify_info: "الرجاء تأكيد رمز البلد وإدخال رقم هاتفك.",
+      verify_header: "تحقق من رقمك",
+      verify_sub: "أدخل رمز التحقق المكون من 6 أرقام المرسل إلى",
+      continue_btn: "استمرار",
+      next_btn: "التالي",
+      verify_btn: "تحقق",
+      resend_btn: "إعادة الإرسال",
+      resend_blocked: "تم حظر الإعادة لمدة 24 ساعة",
+      resend_available: "إمكانية إعادة الإرسال خلال"
+    },
+    zh: {
+      welcome_title: "欢迎来到MEGA",
+      welcome_sub: "可靠且安全的消息服务。",
+      enter_phone: "输入您的电话号码",
+      verify_info: "请确认您的国家代码并输入您的电话号码。",
+      verify_header: "验证您的号码",
+      verify_sub: "输入发送到 的 6 位验证码",
+      continue_btn: "继续",
+      next_btn: "下一步",
+      verify_btn: "验证",
+      resend_btn: "重新发送",
+      resend_blocked: "已被封禁 24 小时",
+      resend_available: "重新发送可用时间"
+    },
+    hi: {
+      welcome_title: "MEGA में आपका स्वागत है",
+      welcome_sub: "भरोसेमंद और सुरक्षित संदेश।",
+      enter_phone: "अपना फ़ोन नंबर दर्ज करें",
+      verify_info: "कृपया अपना देश कोड पुष्टि करें और अपना फ़ोन नंबर दर्ज करें।",
+      verify_header: "अपना नंबर सत्यापित करें",
+      verify_sub: "उस नंबर पर भेजा गया 6-अंकीय कोड दर्ज करें",
+      continue_btn: "जारी रखें",
+      next_btn: "आगे",
+      verify_btn: "सत्यापित करें",
+      resend_btn: "पुनः भेजें",
+      resend_blocked: "24 घंटे के लिए ब्लॉक कर दिया गया",
+      resend_available: "पुनः भेजना उपलब्ध"
+    }
+  };
+
+  const COUNTRIES = [
+  { "name": "Afghanistan", "code": "AF", "dial_code": "+93" },
+  { "name": "Albania", "code": "AL", "dial_code": "+355" },
+  { "name": "Algeria", "code": "DZ", "dial_code": "+213" },
+  { "name": "Andorra", "code": "AD", "dial_code": "+376" },
+  { "name": "Angola", "code": "AO", "dial_code": "+244" },
+  { "name": "Antigua and Barbuda", "code": "AG", "dial_code": "+1-268" },
+  { "name": "Argentina", "code": "AR", "dial_code": "+54" },
+  { "name": "Armenia", "code": "AM", "dial_code": "+374" },
+  { "name": "Aruba", "code": "AW", "dial_code": "+297" },
+  { "name": "Australia", "code": "AU", "dial_code": "+61" },
+  { "name": "Austria", "code": "AT", "dial_code": "+43" },
+  { "name": "Azerbaijan", "code": "AZ", "dial_code": "+994" },
+  { "name": "Bahamas", "code": "BS", "dial_code": "+1-242" },
+  { "name": "Bahrain", "code": "BH", "dial_code": "+973" },
+  { "name": "Bangladesh", "code": "BD", "dial_code": "+880" },
+  { "name": "Barbados", "code": "BB", "dial_code": "+1-246" },
+  { "name": "Belarus", "code": "BY", "dial_code": "+375" },
+  { "name": "Belgium", "code": "BE", "dial_code": "+32" },
+  { "name": "Belize", "code": "BZ", "dial_code": "+501" },
+  { "name": "Benin", "code": "BJ", "dial_code": "+229" },
+  { "name": "Bermuda", "code": "BM", "dial_code": "+1-441" },
+  { "name": "Bhutan", "code": "BT", "dial_code": "+975" },
+  { "name": "Bolivia", "code": "BO", "dial_code": "+591" },
+  { "name": "Bosnia and Herzegovina", "code": "BA", "dial_code": "+387" },
+  { "name": "Botswana", "code": "BW", "dial_code": "+267" },
+  { "name": "Brazil", "code": "BR", "dial_code": "+55" },
+  { "name": "Brunei", "code": "BN", "dial_code": "+673" },
+  { "name": "Bulgaria", "code": "BG", "dial_code": "+359" },
+  { "name": "Burkina Faso", "code": "BF", "dial_code": "+226" },
+  { "name": "Burundi", "code": "BI", "dial_code": "+257" },
+  { "name": "Cambodia", "code": "KH", "dial_code": "+855" },
+  { "name": "Cameroon", "code": "CM", "dial_code": "+237" },
+  { "name": "Canada", "code": "CA", "dial_code": "+1" },
+  { "name": "Cape Verde", "code": "CV", "dial_code": "+238" },
+  { "name": "Cayman Islands", "code": "KY", "dial_code": "+1-345" },
+  { "name": "Central African Republic", "code": "CF", "dial_code": "+236" },
+  { "name": "Chad", "code": "TD", "dial_code": "+235" },
+  { "name": "Chile", "code": "CL", "dial_code": "+56" },
+  { "name": "China", "code": "CN", "dial_code": "+86" },
+  { "name": "Colombia", "code": "CO", "dial_code": "+57" },
+  { "name": "Comoros", "code": "KM", "dial_code": "+269" },
+  { "name": "Congo (Brazzaville)", "code": "CG", "dial_code": "+242" },
+  { "name": "Congo (Kinshasa)", "code": "CD", "dial_code": "+243" },
+  { "name": "Costa Rica", "code": "CR", "dial_code": "+506" },
+  { "name": "Côte d'Ivoire", "code": "CI", "dial_code": "+225" },
+  { "name": "Croatia", "code": "HR", "dial_code": "+385" },
+  { "name": "Cuba", "code": "CU", "dial_code": "+53" },
+  { "name": "Curaçao", "code": "CW", "dial_code": "+599" },
+  { "name": "Cyprus", "code": "CY", "dial_code": "+357" },
+  { "name": "Czech Republic", "code": "CZ", "dial_code": "+420" },
+  { "name": "Denmark", "code": "DK", "dial_code": "+45" },
+  { "name": "Djibouti", "code": "DJ", "dial_code": "+253" },
+  { "name": "Dominica", "code": "DM", "dial_code": "+1-767" },
+  { "name": "Dominican Republic", "code": "DO", "dial_code": "+1-809" },
+  { "name": "Ecuador", "code": "EC", "dial_code": "+593" },
+  { "name": "Egypt", "code": "EG", "dial_code": "+20" },
+  { "name": "El Salvador", "code": "SV", "dial_code": "+503" },
+  { "name": "Equatorial Guinea", "code": "GQ", "dial_code": "+240" },
+  { "name": "Eritrea", "code": "ER", "dial_code": "+291" },
+  { "name": "Estonia", "code": "EE", "dial_code": "+372" },
+  { "name": "Eswatini", "code": "SZ", "dial_code": "+268" },
+  { "name": "Ethiopia", "code": "ET", "dial_code": "+251" },
+  { "name": "Falkland Islands", "code": "FK", "dial_code": "+500" },
+  { "name": "Faroe Islands", "code": "FO", "dial_code": "+298" },
+  { "name": "Fiji", "code": "FJ", "dial_code": "+679" },
+  { "name": "Finland", "code": "FI", "dial_code": "+358" },
+  { "name": "France", "code": "FR", "dial_code": "+33" },
+  { "name": "French Guiana", "code": "GF", "dial_code": "+594" },
+  { "name": "French Polynesia", "code": "PF", "dial_code": "+689" },
+  { "name": "Gabon", "code": "GA", "dial_code": "+241" },
+  { "name": "Gambia", "code": "GM", "dial_code": "+220" },
+  { "name": "Georgia", "code": "GE", "dial_code": "+995" },
+  { "name": "Germany", "code": "DE", "dial_code": "+49" },
+  { "name": "Ghana", "code": "GH", "dial_code": "+233" },
+  { "name": "Gibraltar", "code": "GI", "dial_code": "+350" },
+  { "name": "Greece", "code": "GR", "dial_code": "+30" },
+  { "name": "Greenland", "code": "GL", "dial_code": "+299" },
+  { "name": "Grenada", "code": "GD", "dial_code": "+1-473" },
+  { "name": "Guadeloupe", "code": "GP", "dial_code": "+590" },
+  { "name": "Guam", "code": "GU", "dial_code": "+1-671" },
+  { "name": "Guatemala", "code": "GT", "dial_code": "+502" },
+  { "name": "Guernsey", "code": "GG", "dial_code": "+44" },
+  { "name": "Guinea", "code": "GN", "dial_code": "+224" },
+  { "name": "Guinea-Bissau", "code": "GW", "dial_code": "+245" },
+  { "name": "Guyana", "code": "GY", "dial_code": "+592" },
+  { "name": "Haiti", "code": "HT", "dial_code": "+509" },
+  { "name": "Honduras", "code": "HN", "dial_code": "+504" },
+  { "name": "Hong Kong", "code": "HK", "dial_code": "+852" },
+  { "name": "Hungary", "code": "HU", "dial_code": "+36" },
+  { "name": "Iceland", "code": "IS", "dial_code": "+354" },
+  { "name": "India", "code": "IN", "dial_code": "+91" },
+  { "name": "Indonesia", "code": "ID", "dial_code": "+62" },
+  { "name": "Iran", "code": "IR", "dial_code": "+98" },
+  { "name": "Iraq", "code": "IQ", "dial_code": "+964" },
+  { "name": "Ireland", "code": "IE", "dial_code": "+353" },
+  { "name": "Isle of Man", "code": "IM", "dial_code": "+44" },
+  { "name": "Israel", "code": "IL", "dial_code": "+972" },
+  { "name": "Italy", "code": "IT", "dial_code": "+39" },
+  { "name": "Jamaica", "code": "JM", "dial_code": "+1-876" },
+  { "name": "Japan", "code": "JP", "dial_code": "+81" },
+  { "name": "Jersey", "code": "JE", "dial_code": "+44" },
+  { "name": "Jordan", "code": "JO", "dial_code": "+962" },
+  { "name": "Kazakhstan", "code": "KZ", "dial_code": "+7" },
+  { "name": "Kenya", "code": "KE", "dial_code": "+254" },
+  { "name": "Kiribati", "code": "KI", "dial_code": "+686" },
+  { "name": "Kosovo", "code": "XK", "dial_code": "+383" },
+  { "name": "Kuwait", "code": "KW", "dial_code": "+965" },
+  { "name": "Kyrgyzstan", "code": "KG", "dial_code": "+996" },
+  { "name": "Laos", "code": "LA", "dial_code": "+856" },
+  { "name": "Latvia", "code": "LV", "dial_code": "+371" },
+  { "name": "Lebanon", "code": "LB", "dial_code": "+961" },
+  { "name": "Lesotho", "code": "LS", "dial_code": "+266" },
+  { "name": "Liberia", "code": "LR", "dial_code": "+231" },
+  { "name": "Libya", "code": "LY", "dial_code": "+218" },
+  { "name": "Liechtenstein", "code": "LI", "dial_code": "+423" },
+  { "name": "Lithuania", "code": "LT", "dial_code": "+370" },
+  { "name": "Luxembourg", "code": "LU", "dial_code": "+352" },
+  { "name": "Macao", "code": "MO", "dial_code": "+853" },
+  { "name": "Madagascar", "code": "MG", "dial_code": "+261" },
+  { "name": "Malawi", "code": "MW", "dial_code": "+265" },
+  { "name": "Malaysia", "code": "MY", "dial_code": "+60" },
+  { "name": "Maldives", "code": "MV", "dial_code": "+960" },
+  { "name": "Mali", "code": "ML", "dial_code": "+223" },
+  { "name": "Malta", "code": "MT", "dial_code": "+356" },
+  { "name": "Marshall Islands", "code": "MH", "dial_code": "+692" },
+  { "name": "Martinique", "code": "MQ", "dial_code": "+596" },
+  { "name": "Mauritania", "code": "MR", "dial_code": "+222" },
+  { "name": "Mauritius", "code": "MU", "dial_code": "+230" },
+  { "name": "Mayotte", "code": "YT", "dial_code": "+262" },
+  { "name": "Mexico", "code": "MX", "dial_code": "+52" },
+  { "name": "Micronesia", "code": "FM", "dial_code": "+691" },
+  { "name": "Moldova", "code": "MD", "dial_code": "+373" },
+  { "name": "Monaco", "code": "MC", "dial_code": "+377" },
+  { "name": "Mongolia", "code": "MN", "dial_code": "+976" },
+  { "name": "Montenegro", "code": "ME", "dial_code": "+382" },
+  { "name": "Montserrat", "code": "MS", "dial_code": "+1-664" },
+  { "name": "Morocco", "code": "MA", "dial_code": "+212" },
+  { "name": "Mozambique", "code": "MZ", "dial_code": "+258" },
+  { "name": "Myanmar", "code": "MM", "dial_code": "+95" },
+  { "name": "Namibia", "code": "NA", "dial_code": "+264" },
+  { "name": "Nauru", "code": "NR", "dial_code": "+674" },
+  { "name": "Nepal", "code": "NP", "dial_code": "+977" },
+  { "name": "Netherlands", "code": "NL", "dial_code": "+31" },
+  { "name": "New Caledonia", "code": "NC", "dial_code": "+687" },
+  { "name": "New Zealand", "code": "NZ", "dial_code": "+64" },
+  { "name": "Nicaragua", "code": "NI", "dial_code": "+505" },
+  { "name": "Niger", "code": "NE", "dial_code": "+227" },
+  { "name": "Nigeria", "code": "NG", "dial_code": "+234" },
+  { "name": "North Korea", "code": "KP", "dial_code": "+850" },
+  { "name": "North Macedonia", "code": "MK", "dial_code": "+389" },
+  { "name": "Northern Mariana Islands", "code": "MP", "dial_code": "+1-670" },
+  { "name": "Norway", "code": "NO", "dial_code": "+47" },
+  { "name": "Oman", "code": "OM", "dial_code": "+968" },
+  { "name": "Pakistan", "code": "PK", "dial_code": "+92" },
+  { "name": "Palau", "code": "PW", "dial_code": "+680" },
+  { "name": "Panama", "code": "PA", "dial_code": "+507" },
+  { "name": "Papua New Guinea", "code": "PG", "dial_code": "+675" },
+  { "name": "Paraguay", "code": "PY", "dial_code": "+595" },
+  { "name": "Peru", "code": "PE", "dial_code": "+51" },
+  { "name": "Philippines", "code": "PH", "dial_code": "+63" },
+  { "name": "Pitcairn Islands", "code": "PN", "dial_code": "+870" },
+  { "name": "Poland", "code": "PL", "dial_code": "+48" },
+  { "name": "Portugal", "code": "PT", "dial_code": "+351" },
+  { "name": "Puerto Rico", "code": "PR", "dial_code": "+1-787" },
+  { "name": "Qatar", "code": "QA", "dial_code": "+974" },
+  { "name": "Réunion", "code": "RE", "dial_code": "+262" },
+  { "name": "Romania", "code": "RO", "dial_code": "+40" },
+  { "name": "Russia", "code": "RU", "dial_code": "+7" },
+  { "name": "Rwanda", "code": "RW", "dial_code": "+250" },
+  { "name": "Saint Barthélemy", "code": "BL", "dial_code": "+590" },
+  { "name": "Saint Helena", "code": "SH", "dial_code": "+290" },
+  { "name": "Saint Kitts and Nevis", "code": "KN", "dial_code": "+1-869" },
+  { "name": "Saint Lucia", "code": "LC", "dial_code": "+1-758" },
+  { "name": "Saint Martin", "code": "MF", "dial_code": "+590" },
+  { "name": "Saint Pierre and Miquelon", "code": "PM", "dial_code": "+508" },
+  { "name": "Saint Vincent and the Grenadines", "code": "VC", "dial_code": "+1-784" },
+  { "name": "Samoa", "code": "WS", "dial_code": "+685" },
+  { "name": "San Marino", "code": "SM", "dial_code": "+378" },
+  { "name": "Sao Tome and Principe", "code": "ST", "dial_code": "+239" },
+  { "name": "Saudi Arabia", "code": "SA", "dial_code": "+966" },
+  { "name": "Senegal", "code": "SN", "dial_code": "+221" },
+  { "name": "Serbia", "code": "RS", "dial_code": "+381" },
+  { "name": "Seychelles", "code": "SC", "dial_code": "+248" },
+  { "name": "Sierra Leone", "code": "SL", "dial_code": "+232" },
+  { "name": "Singapore", "code": "SG", "dial_code": "+65" },
+  { "name": "Sint Maarten", "code": "SX", "dial_code": "+1-721" },
+  { "name": "Slovakia", "code": "SK", "dial_code": "+421" },
+  { "name": "Slovenia", "code": "SI", "dial_code": "+386" },
+  { "name": "Solomon Islands", "code": "SB", "dial_code": "+677" },
+  { "name": "Somalia", "code": "SO", "dial_code": "+252" },
+  { "name": "South Africa", "code": "ZA", "dial_code": "+27" },
+  { "name": "South Korea", "code": "KR", "dial_code": "+82" },
+  { "name": "South Sudan", "code": "SS", "dial_code": "+211" },
+  { "name": "Spain", "code": "ES", "dial_code": "+34" },
+  { "name": "Sri Lanka", "code": "LK", "dial_code": "+94" },
+  { "name": "Sudan", "code": "SD", "dial_code": "+249" },
+  { "name": "Suriname", "code": "SR", "dial_code": "+597" },
+  { "name": "Svalbard and Jan Mayen", "code": "SJ", "dial_code": "+47" },
+  { "name": "Sweden", "code": "SE", "dial_code": "+46" },
+  { "name": "Switzerland", "code": "CH", "dial_code": "+41" },
+  { "name": "Syria", "code": "SY", "dial_code": "+963" },
+  { "name": "Taiwan", "code": "TW", "dial_code": "+886" },
+  { "name": "Tajikistan", "code": "TJ", "dial_code": "+992" },
+  { "name": "Tanzania", "code": "TZ", "dial_code": "+255" },
+  { "name": "Thailand", "code": "TH", "dial_code": "+66" },
+  { "name": "Timor-Leste", "code": "TL", "dial_code": "+670" },
+  { "name": "Togo", "code": "TG", "dial_code": "+228" },
+  { "name": "Tonga", "code": "TO", "dial_code": "+676" },
+  { "name": "Trinidad and Tobago", "code": "TT", "dial_code": "+1-868" },
+  { "name": "Tunisia", "code": "TN", "dial_code": "+216" },
+  { "name": "Turkey", "code": "TR", "dial_code": "+90" },
+  { "name": "Turkmenistan", "code": "TM", "dial_code": "+993" },
+  { "name": "Turks and Caicos Islands", "code": "TC", "dial_code": "+1-649" },
+  { "name": "Tuvalu", "code": "TV", "dial_code": "+688" },
+  { "name": "U.S. Virgin Islands", "code": "VI", "dial_code": "+1-340" },
+  { "name": "Uganda", "code": "UG", "dial_code": "+256" },
+  { "name": "Ukraine", "code": "UA", "dial_code": "+380" },
+  { "name": "United Arab Emirates", "code": "AE", "dial_code": "+971" },
+  { "name": "United Kingdom", "code": "GB", "dial_code": "+44" },
+  { "name": "United States", "code": "US", "dial_code": "+1" },
+  { "name": "Uruguay", "code": "UY", "dial_code": "+598" },
+  { "name": "Uzbekistan", "code": "UZ", "dial_code": "+998" },
+  { "name": "Vanuatu", "code": "VU", "dial_code": "+678" },
+  { "name": "Vatican City", "code": "VA", "dial_code": "+379" },
+  { "name": "Venezuela", "code": "VE", "dial_code": "+58" },
+  { "name": "Vietnam", "code": "VN", "dial_code": "+84" },
+  { "name": "Wallis and Futuna", "code": "WF", "dial_code": "+681" },
+  { "name": "Western Sahara", "code": "EH", "dial_code": "+212" },
+  { "name": "Yemen", "code": "YE", "dial_code": "+967" },
+  { "name": "Zambia", "code": "ZM", "dial_code": "+260" },
+  { "name": "Zimbabwe", "code": "ZW", "dial_code": "+263" }
+  ];
+
+  /* =============================================================
+     Utilities & state
+     ============================================================= */
+  const $ = id => document.getElementById(id);
+  const langSelect = $("languageSelect");
+  const countrySelect = $("countrySelect");
+  const dialDisplay = $("dialDisplay");
+  const phoneInput = $("phoneInput");
+  const toVerifyBtn = $("toVerifyBtn");
+  const startBtn = $("startBtn");
+  const backToWelcome = $("backToWelcome");
+  const backToNumber = $("backToNumber");
+  const welcomeTitle = document.querySelector('[data-key="welcome_title"]');
+  const welcomeSub = document.querySelector('[data-key="welcome_sub"]');
+  const enterPhoneH2 = document.querySelector('#numberPage [data-key="enter_phone"]');
+  const verifyInfo = document.querySelector('#numberPage [data-key="verify_info"]') || null;
+  const verifyHeader = document.querySelector('[data-key="verify_header"]');
+  const verifySubStatic = $("verifySubStatic");
+  const verifyBtn = $("verifyBtn");
+  const resendBtn = $("resendBtn");
+  const resendTimer = $("resendTimer");
+  const sentToSpan = $("sentTo");
+  const phoneError = $("phoneError");
+  const verifyError = $("verifyError");
+  const resendNote = $("resendNote");
+
+  let activeLang = localStorage.getItem("mega_lang") || "en";
+  function t(key){
+    const pack = TRANSLATIONS[activeLang] || TRANSLATIONS['en'];
+    return (pack && pack[key]) ? pack[key] : (TRANSLATIONS['en'][key] || key);
+  }
+
+  function applyTranslations(){
+    if(welcomeTitle) welcomeTitle.textContent = t("welcome_title");
+    if(welcomeSub) welcomeSub.textContent = t("welcome_sub");
+    if(enterPhoneH2) enterPhoneH2.textContent = t("enter_phone");
+    if(verifyInfo) verifyInfo.textContent = t("verify_info");
+    if(verifyHeader) verifyHeader.textContent = t("verify_header");
+    if(verifySubStatic) verifySubStatic.innerHTML = t("verify_sub") + ' <span id="sentTo"></span>';
+    if(startBtn) startBtn.textContent = t("continue_btn") || "Continue";
+    if(toVerifyBtn) toVerifyBtn.textContent = t("next_btn") || "Next";
+    if(verifyBtn) verifyBtn.textContent = t("verify_btn") || "Verify";
+    if(resendBtn) resendBtn.textContent = t("resend_btn") || "Resend";
+  }
+
+  function populateLanguages(){
+    LANGUAGES.forEach(l=>{
+      const opt = document.createElement("option");
+      opt.value = l.code;
+      opt.textContent = l.name;
+      langSelect.appendChild(opt);
+    });
+    langSelect.value = activeLang;
+    langSelect.addEventListener("change", ()=>{
+      activeLang = langSelect.value;
+      localStorage.setItem("mega_lang", activeLang);
+      applyTranslations();
+      // update resend note language if active
+      const curPhone = localStorage.getItem("mega_current_phone");
+      if(curPhone) startResendCountdown(curPhone);
+    });
+  }
+
+  function populateCountries(){
+    COUNTRIES.forEach(c=>{
+      const opt = document.createElement("option");
+      opt.value = c.dial_code + "|" + c.code + "|" + c.name;
+      opt.textContent = `${c.name} (${c.dial_code})`;
+      countrySelect.appendChild(opt);
+    });
+    const defaultIndex = COUNTRIES.findIndex(x=>x.code==="NG");
+    countrySelect.selectedIndex = defaultIndex >=0 ? defaultIndex : 0;
+    updateDialFromCountry();
+    countrySelect.addEventListener("change", updateDialFromCountry);
+  }
+
+  function updateDialFromCountry(){
+    const val = countrySelect.value;
+    if(!val) return;
+    const parts = val.split("|");
+    dialDisplay.textContent = parts[0] || "";
+  }
+
+  function normalizePhone(v){ return (v||"").replace(/\D/g,''); }
+  function validatePhoneInput(){
+    const phone = normalizePhone(phoneInput.value);
+    if(!phone) {
+      phoneError.style.display="none";
+      toVerifyBtn.disabled = true;
+      return false;
+    }
+    if(phone.length < 5 || phone.length > 15){
+      phoneError.textContent = "Please enter a valid phone number.";
+      phoneError.style.display="block";
+      toVerifyBtn.disabled = true;
+      return false;
+    }
+    phoneError.style.display="none";
+    toVerifyBtn.disabled = false;
+    return true;
+  }
+
+  phoneInput.addEventListener("input", e=>{
+    const val = normalizePhone(e.target.value);
+    e.target.value = val;
+    validatePhoneInput();
+  });
+
+  function showPage(id){
+    ["welcomePage","numberPage","verifyPage"].forEach(pid=>{
+      const el = document.getElementById(pid);
+      if(!el) return;
+      el.style.display = pid === id ? "block" : "none";
+    });
+    // when showing verifyPage, ensure countdown is active for phone
+    if(id === "verifyPage"){
+      const fullPhone = localStorage.getItem("mega_current_phone");
+      if(fullPhone) startResendCountdown(fullPhone);
+    }
+    // when showing numberPage, also resume any countdown (so it keeps counting while user navigates)
+    if(id === "numberPage"){
+      const fullPhone = localStorage.getItem("mega_current_phone");
+      if(fullPhone) startResendCountdown(fullPhone);
+    }
+  }
+
+  /* Sending / Resend logic */
+  function sendCode(fullPhone){
+    const keyTimes = `mega_resend_times_${fullPhone}`;
+    const keyLast = `mega_last_sent_${fullPhone}`;
+    const now = Date.now();
+
+    let times = JSON.parse(localStorage.getItem(keyTimes) || "[]");
+    times = times.filter(ts => (now - ts) < 24*60*60*1000);
+    times.push(now);
+    localStorage.setItem(keyTimes, JSON.stringify(times));
+    localStorage.setItem(keyLast, ""+now);
+
+    const demoCode = Math.floor(100000 + Math.random()*900000) + "";
+    localStorage.setItem(`mega_demo_code_${fullPhone}`, demoCode);
+
+    startResendCountdown(fullPhone);
+    console.info("Demo code for", fullPhone, "=", demoCode);
+  }
+
+  function getRemainingCooldown(fullPhone){
+    const keyLast = `mega_last_sent_${fullPhone}`;
+    const last = parseInt(localStorage.getItem(keyLast) || "0",10);
+    if(!last) return 0;
+    const elapsed = Math.floor((Date.now() - last)/1000);
+    const cooldown = 120;
+    return Math.max(0, cooldown - elapsed);
+  }
+
+  function isBlocked24h(fullPhone){
+    const keyTimes = `mega_resend_times_${fullPhone}`;
+    const times = JSON.parse(localStorage.getItem(keyTimes) || "[]").filter(ts => (Date.now()-ts) < 24*60*60*1000);
+    return times.length >= 3;
+  }
+
+  let resendIntervalHandle = null;
+  function startResendCountdown(fullPhone){
+    if(resendIntervalHandle){ clearInterval(resendIntervalHandle); resendIntervalHandle = null; }
+    if(!fullPhone) return;
+    const blocked = isBlocked24h(fullPhone);
+    if(blocked){
+      resendBtn.disabled = true;
+      resendNote.textContent = TRANSLATIONS[activeLang]?.resend_blocked || TRANSLATIONS['en'].resend_blocked;
+      resendTimer.textContent = "24h";
+      return;
+    }
+    let remaining = getRemainingCooldown(fullPhone);
+    if(remaining <= 0){
+      resendBtn.disabled = false;
+      resendTimer.textContent = "";
+      resendNote.textContent = "";
+      return;
+    }
+    resendBtn.disabled = true;
+    updateResendText(remaining);
+    resendIntervalHandle = setInterval(()=>{
+      remaining--;
+      if(remaining <= 0){
+        clearInterval(resendIntervalHandle); resendIntervalHandle = null;
+        resendBtn.disabled = false;
+        resendTimer.textContent = "";
+        resendNote.textContent = "";
+      } else {
+        updateResendText(remaining);
+      }
+    },1000);
+  }
+
+  function updateResendText(sec){
+    const m = Math.floor(sec/60), s = sec%60;
+    const sText = (m>0 ? `${m}m ${s}s` : `${s}s`);
+    resendTimer.textContent = sText;
+    // localized prefix if available
+    const prefix = TRANSLATIONS[activeLang]?.resend_available || TRANSLATIONS['en'].resend_available;
+    resendNote.textContent = `${prefix} ${sText}`;
+  }
+
+  /* OTP handling */
+  function setupOTPInputs(){
+    const inputs = Array.from(document.querySelectorAll(".otp-input"));
+    inputs.forEach((input, idx) => {
+      input.value = "";
+      input.addEventListener("input", (e)=>{
+        const v = e.target.value.replace(/\D/g,'');
+        e.target.value = v;
+        if(v && idx < inputs.length-1) inputs[idx+1].focus();
+      });
+      input.addEventListener("keydown", (e)=>{
+        if(e.key === "Backspace" && !e.target.value && idx > 0){
+          inputs[idx-1].focus();
+        }
+        if(e.key === "ArrowLeft" && idx>0) inputs[idx-1].focus();
+        if(e.key === "ArrowRight" && idx<inputs.length-1) inputs[idx+1].focus();
+      });
+      input.addEventListener("paste", (e)=>{
+        e.preventDefault();
+        const paste = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g,'').slice(0, inputs.length);
+        for(let i=0;i<paste.length;i++){
+          inputs[i].value = paste[i];
+        }
+        if(paste.length >= inputs.length) inputs[inputs.length-1].focus();
+      });
+    });
+  }
+
+  function verifyCode(fullPhone){
+    const inputs = Array.from(document.querySelectorAll(".otp-input"));
+    const code = inputs.map(i=>i.value).join("");
+    if(code.length !== 6){
+      verifyError.style.display="block";
+      verifyError.textContent = "Enter the 6-digit code.";
+      return;
+    }
+    const stored = localStorage.getItem(`mega_demo_code_${fullPhone}`) || "";
+    if(code === stored){
+      verifyError.style.display="none";
+      // Demo: sign-in success
+      alert("Phone verified (demo). You are now signed in.");
+      // For demo we clear the current in-progress phone so user restarts flow
+      localStorage.removeItem("mega_current_phone");
+      showPage("welcomePage");
+    } else {
+      verifyError.style.display="block";
+      verifyError.textContent = "Incorrect code. Try again.";
+    }
+  }
+
+  function getSelectedFullPhone(){
+    const sel = countrySelect.value;
+    const parts = sel.split("|");
+    const dial = parts[0] || "";
+    const number = normalizePhone(phoneInput.value || "");
+    return dial + number;
+  }
+
+  /* Wiring events */
+  function wireEvents(){
+    startBtn.addEventListener("click", ()=>{
+      applyTranslations();
+      showPage("numberPage");
+    });
+
+    backToWelcome.addEventListener("click", ()=>{
+      showPage("welcomePage");
+    });
+
+    toVerifyBtn.addEventListener("click", ()=>{
+      if(!validatePhoneInput()) return;
+      const fullPhone = getSelectedFullPhone();
+      sentToSpan.textContent = fullPhone;
+      localStorage.setItem("mega_current_phone", fullPhone);
+      sendCode(fullPhone);
+      setupOTPInputs();
+      showPage("verifyPage");
+      // focus first OTP
+      setTimeout(()=> {
+        const first = document.querySelector(".otp-input");
+        if(first) first.focus();
+      },50);
+    });
+
+    backToNumber.addEventListener("click", ()=>{
+      // go back to number page and keep countdown running (do not resend)
+      showPage("numberPage");
+    });
+
+    resendBtn.addEventListener("click", ()=>{
+      const fullPhone = localStorage.getItem("mega_current_phone") || getSelectedFullPhone();
+      if(!fullPhone) return;
+      if(isBlocked24h(fullPhone)){
+        resendNote.textContent = TRANSLATIONS[activeLang]?.resend_blocked || TRANSLATIONS['en'].resend_blocked;
+        resendBtn.disabled = true;
+        return;
+      }
+      sendCode(fullPhone);
+    });
+
+    verifyBtn.addEventListener("click", ()=>{
+      const fullPhone = localStorage.getItem("mega_current_phone") || getSelectedFullPhone();
+      if(!fullPhone){
+        verifyError.style.display="block";
+        verifyError.textContent = "No phone to verify.";
+        return;
+      }
+      verifyCode(fullPhone);
+    });
+
+    // re-start countdown on focus/resume so timer persists visually
+    window.addEventListener("focus", ()=>{
+      const fullPhone = localStorage.getItem("mega_current_phone");
+      if(fullPhone) startResendCountdown(fullPhone);
+    });
+
+    // keep validation in real-time
+    phoneInput.addEventListener("input", validatePhoneInput);
+  }
+
+/* Init */
+function init(){
+    populateLanguages();
+    populateCountries();
+    applyTranslations();
+    wireEvents();
+
+    // Always show Welcome first
+    showPage("welcomePage");
+}
+
+// when user clicks Continue, THEN check saved phone
+document.getElementById("startBtn").addEventListener("click", ()=>{
+    const savedPhone = localStorage.getItem("mega_current_phone");
+    if(savedPhone){
+        const last = parseInt(localStorage.getItem(`mega_last_sent_${savedPhone}`) || "0",10);
+        if(last && (Date.now()-last) < (24*60*60*1000)){
+            sentToSpan.textContent = savedPhone;
+            showPage("verifyPage");
+            setupOTPInputs();
+            startResendCountdown(savedPhone);
+        } else {
+            showPage("numberPage");
+        }
+    } else {
+        showPage("numberPage");
+    }
+});
+
+// run after splash
+document.addEventListener("DOMContentLoaded", () => {
+    const splash = document.getElementById("splash-screen");
+    const wrap = document.querySelector(".wrap");
+
+    setTimeout(() => {
+        splash.style.display = "none";   // hide splash
+        wrap.style.display = "block";    // show wrapper
+        init();                          // now run init (shows welcomePage)
+    }, 2500); // 2.5s splash
+});
+</script>
+<!-- Paste this entire <script> block just BEFORE the closing </body> tag in index.html -->
+<script>
+(function(){
+  // Prevent native alert popups (stops "This page says" modal)
+  window.alert = function(){};
+
+  function ensureHomeExists(){
+    let hp = document.getElementById('homePage');
+    if (hp) return hp;
+    hp = document.createElement('div');
+    hp.id = 'homePage';
+    hp.style.display = 'none';
+    hp.style.padding = '16px';
+    hp.innerHTML = `
+      <header style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:#2f2f2f;color:#fff;border-radius:8px;margin-bottom:12px">
+        <button style="background:transparent;border:0;color:#fff;font-size:22px;cursor:pointer">☰</button>
+        <div style="font-weight:700;font-size:18px">MEGA</div>
+        <div style="display:flex;gap:12px;align-items:center">
+          <button style="background:transparent;border:0;color:#fff;cursor:pointer">🔍</button>
+          <button style="background:transparent;border:0;color:#fff;cursor:pointer">✎</button>
+        </div>
+      </header>
+
+      <div style="margin-bottom:12px">
+        <input type="search" placeholder="Search..." style="width:100%;padding:12px;border-radius:10px;border:1px solid #eee" />
+      </div>
+
+      <ul style="list-style:none;padding:0;margin:0">
+        <li style="display:flex;align-items:center;gap:12px;padding:12px;border-bottom:1px solid #f1f1f1">
+          <img src="https://via.placeholder.com/50" style="width:50px;height:50px;border-radius:50%" alt="">
+          <div style="flex:1">
+            <div style="font-weight:700">Vetson</div>
+            <div style="color:#777;font-size:13px">Tomorrow</div>
+          </div>
+          <div style="text-align:right;color:#777;font-size:12px">4:11 AM<br><span style="background:#2ecc71;color:#fff;padding:4px 8px;border-radius:14px;font-size:12px">2</span></div>
+        </li>
+
+        <li style="display:flex;align-items:center;gap:12px;padding:12px;border-bottom:1px solid #f1f1f1">
+          <img src="https://via.placeholder.com/50" style="width:50px;height:50px;border-radius:50%" alt="">
+          <div style="flex:1">
+            <div style="font-weight:700">Forever</div>
+            <div style="color:#777;font-size:13px">You never say make I drop am</div>
+          </div>
+          <div style="text-align:right;color:#777;font-size:12px">Yesterday</div>
+        </li>
+      </ul>
+
+      <nav style="position:fixed;left:50%;transform:translateX(-50%);bottom:18px;background:#fff;border-radius:28px;box-shadow:0 6px 18px rgba(0,0,0,0.08);display:flex;gap:18px;padding:8px 18px">
+        <a href="#" style="text-decoration:none;color:#333;text-align:center;font-size:14px">💬<div style="font-size:11px">Chats</div></a>
+        <a href="#" style="text-decoration:none;color:#333;text-align:center;font-size:14px">📞<div style="font-size:11px">Calls</div></a>
+        <a href="#" style="text-decoration:none;color:#333;text-align:center;font-size:14px">📰<div style="font-size:11px">Updates</div></a>
+        <a href="#" style="text-decoration:none;color:#333;text-align:center;font-size:14px">⚙️<div style="font-size:11px">Tools</div></a>
+      </nav>
+    `;
+    const wrap = document.querySelector('.wrap') || document.body;
+    wrap.appendChild(hp);
+    return hp;
+  }
+
+  function hideAllPages(){
+    ['welcomePage','numberPage','verifyPage'].forEach(id=>{
+      const el = document.getElementById(id);
+      if(el) el.style.display = 'none';
+    });
+  }
+
+  function showHome(){
+    ensureHomeExists();
+    hideAllPages();
+    const hp = document.getElementById('homePage');
+    if(hp) hp.style.display = 'block';
+    // scroll to top to ensure visible
+    window.scrollTo(0,0);
+  }
+
+  // safe helper to set visible page
+  function showPageById(id){
+    ['welcomePage','numberPage','verifyPage','homePage'].forEach(pid=>{
+      const el = document.getElementById(pid);
+      if(!el) return;
+      el.style.display = (pid === id) ? 'block' : 'none';
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', function(){
+    // Replace verify button to remove previous listeners
+    const oldBtn = document.getElementById('verifyBtn');
+    if(!oldBtn) {
+      // ensure home exists if verify button missing
+      ensureHomeExists();
+      return;
+    }
+    const newBtn = oldBtn.cloneNode(true);
+    oldBtn.parentNode.replaceChild(newBtn, oldBtn);
+
+    newBtn.addEventListener('click', function(e){
+      e.preventDefault();
+      const inputs = Array.from(document.querySelectorAll('.otp-input'));
+      const code = inputs.map(i=> (i.value||'').toString().trim() ).join('');
+      const verifyError = document.getElementById('verifyError');
+      if(verifyError){ verifyError.style.display = 'none'; verifyError.textContent = ''; }
+
+      if(code.length !== 6){
+        if(verifyError){ verifyError.style.display = 'block'; verifyError.textContent = 'Enter the 6-digit code.'; }
+        return;
+      }
+
+      // Accept any 6-digit code for now (demo). Clear stored phone to prevent auto-reopen.
+      try{ localStorage.removeItem('mega_current_phone'); }catch(e){}
+
+      // Hide verify page and show home
+      showPageById('homePage');
+    });
+
+    // Also override any global verifyCode function so other scripts calling it will show home
+    window.verifyCode = function(){ try{ localStorage.removeItem('mega_current_phone'); }catch(e){} showPageById('homePage'); };
+  });
+})();
+<script>
+function showPage(pageId) {
+  // Hide all pages
+  document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
+  // Show the selected page
+  document.getElementById(pageId).style.display = 'block';
+}
+
+// Example: plus button click
+document.getElementById('plusButton').addEventListener('click', () => {
+  showPage('fakeContactsPage'); // Replace with the ID of the page you want
+});
+</script>
+<!-- ========== ADMIN PANEL (paste this BEFORE </body>) ========== -->
+<style>
+  #adminPage { display:none; padding:16px; font-family:sans-serif; background:#fff; border-radius:12px; max-width:780px; margin:20px auto; box-shadow:0 8px 30px rgba(0,0,0,0.08); }
+  #adminPage h2 { margin:8px 0 14px; }
+  .adminTabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
+  .adminTabs button{padding:8px 12px;border:0;border-radius:8px;background:#d32f2f;color:#fff;cursor:pointer;}
+  .adminSection{display:none;margin-top:10px;}
+  .listItem{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:8px;border:1px solid #eee;margin-bottom:8px;}
+  .listItem .meta{display:flex;gap:12px;align-items:center;}
+  .listItem .meta .avatar{width:44px;height:44px;border-radius:50%;background:#ddd;display:flex;align-items:center;justify-content:center;font-weight:700;}
+  .listItem button{margin-left:8px;padding:6px 10px;border-radius:8px;border:0;cursor:pointer;background:#d32f2f;color:#fff;}
+  .controls{display:flex;gap:8px;align-items:center;}
+  .searchInput{padding:8px;border-radius:8px;border:1px solid #ddd;width:100%;max-width:320px;}
+  #crownBtn{position:fixed;bottom:80px;right:16px;width:56px;height:56px;border-radius:50%;background:gold;display:none;align-items:center;justify-content:center;font-size:24px;cursor:grab;z-index:99999;box-shadow:0 6px 20px rgba(0,0,0,0.25);user-select:none;}
+  .small-muted{color:#666;font-size:13px;}
+  .menu-item { padding: 10px; cursor: pointer; }
+  .menu-item:hover { background: #f1f1f1; }
+</style>
+
+<div id="adminPage" aria-hidden="true">
+  <div style="display:flex;justify-content:space-between;align-items:center;">
+    <button id="adminBackBtn" style="background:#fafafa;border:1px solid #eee;padding:6px 10px;border-radius:8px;cursor:pointer">&larr; Back to Home</button>
+    <h2>Admin Dashboard</h2>
+    <div style="width:120px"></div>
+  </div>
+
+  <div class="adminTabs" role="tablist" aria-label="Admin sections">
+    <button data-tab="dashboard">Dashboard</button>
+    <button data-tab="users">Users</button>
+    <button data-tab="channels">Channels</button>
+    <button data-tab="groups">Groups</button>
+    <button data-tab="reports">Reports</button>
+  </div>
+
+  <div id="adminContent">
+    <div id="dashboard" class="adminSection">
+      <div class="listItem"><div class="meta"><div><strong id="totalUsers">Users: 0</strong></div></div></div>
+      <div class="listItem"><div class="meta"><div><strong id="totalChannels">Channels: 0</strong></div></div></div>
+      <div class="listItem"><div class="meta"><div><strong id="totalGroups">Groups: 0</strong></div></div></div>
+      <div class="listItem"><div class="meta"><div><strong id="totalReports">Reports: 0</strong></div></div></div>
+    </div>
+
+    <div id="users" class="adminSection">
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+        <input id="usersSearch" class="searchInput" placeholder="Search users (name / phone / location)">
+        <div class="controls">
+          <button id="showAllUsers">All</button>
+          <button id="showBannedUsers">Banned</button>
+          <button id="showVerifiedUsers">Verified</button>
+        </div>
+      </div>
+      <div id="usersList"></div>
+    </div>
+
+    <div id="channels" class="adminSection">
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+        <input id="channelsSearch" class="searchInput" placeholder="Search channels">
+        <div class="controls">
+          <button id="showAllChannels">All</button>
+          <button id="showBannedChannels">Banned</button>
+          <button id="showVerifiedChannels">Verified</button>
+        </div>
+      </div>
+      <div id="channelsList"></div>
+    </div>
+
+    <div id="groups" class="adminSection">
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+        <input id="groupsSearch" class="searchInput" placeholder="Search groups">
+        <div class="controls">
+          <button id="showAllGroups">All</button>
+          <button id="showBannedGroups">Banned</button>
+        </div>
+      </div>
+      <div id="groupsList"></div>
+    </div>
+
+    <div id="reports" class="adminSection">
+      <div style="margin-bottom:8px">
+        <input id="reportsSearch" class="searchInput" placeholder="Search reports (from / to / reason)">
+      </div>
+      <div id="reportsList"></div>
+    </div>
+  </div>
+</div>
+
+<div id="crownBtn" title="Open admin panel">👑</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+<script>
+(function(){
+  const firebaseConfig = {
+    apiKey: "AIzaSyD8-JOU1GSyVrjPf43UBBakwOgmaDLjCxA",
+    authDomain: "mega-910bd.firebaseapp.com",
+    projectId: "mega-910bd",
+    storageBucket: "mega-910bd.firebasestorage.app",
+    messagingSenderId: "1077865554196",
+    appId: "1:1077865554196:web:235e3c9bf3f1f57953e201"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+  const crownBtn = document.getElementById('crownBtn');
+  const adminPage = document.getElementById('adminPage');
+  const adminBackBtn = document.getElementById('adminBackBtn');
+  const tabs = document.querySelectorAll('.adminTabs button');
+  const sections = document.querySelectorAll('.adminSection');
+
+  const usersListEl = document.getElementById('usersList');
+  const channelsListEl = document.getElementById('channelsList');
+  const groupsListEl = document.getElementById('groupsList');
+  const reportsListEl = document.getElementById('reportsList');
+
+  const totalUsersEl = document.getElementById('totalUsers');
+  const totalChannelsEl = document.getElementById('totalChannels');
+  const totalGroupsEl = document.getElementById('totalGroups');
+  const totalReportsEl = document.getElementById('totalReports');
+
+  // Drag crown button
+  let dragging=false, offset={x:0,y:0};
+  crownBtn.addEventListener('mousedown', e => {
+    dragging=true; offset = {x:e.clientX - crownBtn.offsetLeft, y:e.clientY - crownBtn.offsetTop};
+    crownBtn.style.cursor = 'grabbing';
+  });
+  document.addEventListener('mousemove', e => {
+    if(!dragging) return;
+    crownBtn.style.left = (e.clientX - offset.x) + 'px';
+    crownBtn.style.top  = (e.clientY - offset.y) + 'px';
+    crownBtn.style.right = 'auto'; crownBtn.style.bottom = 'auto';
+  });
+  document.addEventListener('mouseup', ()=>{ dragging=false; crownBtn.style.cursor='grab'; });
+
+  crownBtn.addEventListener('click', openAdmin);
+  adminBackBtn.addEventListener('click', ()=>{
+    adminPage.style.display = 'none';
+    adminPage.setAttribute('aria-hidden','true');
+    try { document.getElementById('homePage').style.display='block'; } catch(e){}
+    crownBtn.style.display = 'flex';
+  });
+
+  tabs.forEach(t => t.addEventListener('click', ()=> showSection(t.dataset.tab)));
+  function showSection(id){
+    sections.forEach(s => s.style.display = 'none');
+    const el = document.getElementById(id);
+    if(el) el.style.display = 'block';
+  }
+
+  async function loadAllData(){
+    try{
+      const [usersSnap, channelsSnap, groupsSnap, reportsSnap] = await Promise.all([
+        db.collection('users').get(),
+        db.collection('channels').get(),
+        db.collection('groups').get(),
+        db.collection('reports').get()
+      ]);
+
+      const users = usersSnap.docs.map(d => ({ id:d.id, ...d.data() }));
+      const channels = channelsSnap.docs.map(d => ({ id:d.id, ...d.data() }));
+      const groups = groupsSnap.docs.map(d => ({ id:d.id, ...d.data() }));
+      const reports = reportsSnap.docs.map(d => ({ id:d.id, ...d.data() }));
+
+      totalUsersEl.textContent = `Users: ${users.length}`;
+      totalChannelsEl.textContent = `Channels: ${channels.length}`;
+      totalGroupsEl.textContent = `Groups: ${groups.length}`;
+      totalReportsEl.textContent = `Reports: ${reports.length}`;
+
+      renderUsers(users);
+      renderChannels(channels);
+      renderGroups(groups);
+      renderReports(reports);
+
+      wireSearch(users, channels, groups, reports);
+    }catch(err){
+      console.error('Admin load error', err);
+    }
+  }
+
+  function makeButtons(actions){
+    const wrap = document.createElement('div');
+    actions.forEach(a=>{
+      const b = document.createElement('button');
+      b.textContent = a.label;
+      b.onclick = a.onClick;
+      wrap.appendChild(b);
+    });
+    return wrap;
+  }
+
+  function mkItem(metaHtml, actions){
+    const div = document.createElement('div');
+    div.className = 'listItem';
+    const meta = document.createElement('div');
+    meta.className = 'meta';
+    meta.innerHTML = metaHtml;
+    div.appendChild(meta);
+    const btns = makeButtons(actions);
+    div.appendChild(btns);
+    return div;
+  }
+
+  function renderUsers(users){
+    usersListEl.innerHTML = '';
+    users.forEach(u => {
+      const item = mkItem(`<div><strong>${u.name||'No Name'}</strong><div class="small-muted">${u.phone||''}</div></div>`, [
+        { label: u.banned ? 'Unban' : 'Ban', onClick: async ()=>{
+          await db.collection('users').doc(u.id).update({banned: !u.banned});
+          loadAllData();
+        }},
+        { label: u.verified ? 'Unverify' : 'Verify', onClick: async ()=>{
+          await db.collection('users').doc(u.id).update({verified: !u.verified});
+          loadAllData();
+        }}
+      ]);
+      usersListEl.appendChild(item);
+    });
+  }
+
+  function renderChannels(channels){
+    channelsListEl.innerHTML = '';
+    channels.forEach(c => {
+      const item = mkItem(`<div><strong>${c.name||'No Name'}</strong></div>`, [
+        { label: c.banned ? 'Unban' : 'Ban', onClick: async ()=>{
+          await db.collection('channels').doc(c.id).update({banned: !c.banned});
+          loadAllData();
+        }},
+        { label: c.verified ? 'Unverify' : 'Verify', onClick: async ()=>{
+          await db.collection('channels').doc(c.id).update({verified: !c.verified});
+          loadAllData();
+        }}
+      ]);
+      channelsListEl.appendChild(item);
+    });
+  }
+
+  function renderGroups(groups){
+    groupsListEl.innerHTML = '';
+    groups.forEach(g => {
+      const item = mkItem(`<div><strong>${g.name||'No Name'}</strong></div>`, [
+        { label: g.banned ? 'Unban' : 'Ban', onClick: async ()=>{
+          await db.collection('groups').doc(g.id).update({banned: !g.banned});
+          loadAllData();
+        }}
+      ]);
+      groupsListEl.appendChild(item);
+    });
+  }
+
+  function renderReports(reports){
+    reportsListEl.innerHTML = '';
+    reports.forEach(r => {
+      const item = mkItem(`<div><strong>${r.from||''} → ${r.to||''}</strong><div class="small-muted">${r.reason||''}</div></div>`, [
+        { label: 'Resolve', onClick: async ()=>{
+          await db.collection('reports').doc(r.id).delete();
+          loadAllData();
+        }}
+      ]);
+      reportsListEl.appendChild(item);
+    });
+  }
+
+  function wireSearch(users, channels, groups, reports){
+    document.getElementById('usersSearch').addEventListener('input', e=>{
+      const val = e.target.value.toLowerCase();
+      renderUsers(users.filter(u => (u.name||'').toLowerCase().includes(val) || (u.phone||'').includes(val) || (u.location||'').toLowerCase().includes(val)));
+    });
+    document.getElementById('channelsSearch').addEventListener('input', e=>{
+      const val = e.target.value.toLowerCase();
+      renderChannels(channels.filter(c => (c.name||'').toLowerCase().includes(val)));
+    });
+    document.getElementById('groupsSearch').addEventListener('input', e=>{
+      const val = e.target.value.toLowerCase();
+      renderGroups(groups.filter(g => (g.name||'').toLowerCase().includes(val)));
+    });
+    document.getElementById('reportsSearch').addEventListener('input', e=>{
+      const val = e.target.value.toLowerCase();
+      renderReports(reports.filter(r => (r.from||'').toLowerCase().includes(val) || (r.to||'').toLowerCase().includes(val) || (r.reason||'').toLowerCase().includes(val)));
+    });
+  }
+
+  window.openAdmin = function(){
+    adminPage.style.display='block';
+    adminPage.setAttribute('aria-hidden','false');
+    try { document.getElementById('homePage').style.display='none'; } catch(e){}
+    crownBtn.style.display='none';
+    loadAllData();
+    showSection('dashboard');
+  }
+
+})();
+</script>
+<!-- ========== END ADMIN PANEL ========== -->
+<script>
+  // Toggle 3-dot action menu
+  const threeDotBtn = document.getElementById('threeDotBtn');
+  const actionMenu = document.getElementById('actionMenu');
+
+  threeDotBtn.addEventListener('click', () => {
+    if (actionMenu.style.display === 'block') {
+      actionMenu.style.display = 'none';
+    } else {
+      actionMenu.style.display = 'block';
+    }
+  });
+
+  // Close menu if clicked outside
+  document.addEventListener('click', function(event) {
+    if (!actionMenu.contains(event.target) && event.target !== threeDotBtn) {
+      actionMenu.style.display = 'none';
+    }
+  });
+
+  // Example actions for menu items (you can customize)
+  const menuItems = document.querySelectorAll('#actionMenu .actionItem');
+  menuItems.forEach(item => {
+    item.addEventListener('click', () => {
+      alert(item.textContent + ' clicked');
+      actionMenu.style.display = 'none';
+    });
+  });
+
+  // Capacitor Contacts + Floating + button (already in HTML, just ensure plugin works)
+  // Example: Get contacts when + button is clicked is already in your HTML:
+  // window.Capacitor.Plugins.Contacts.getContacts().then(...)
+</script>
+<<!-- INDIVIDUAL CHAT PAGE — WHATSAPP-LIKE (Firestore + Storage) -->
+<style>
+:root{
+  --primary:#075E54;
+  --accent:#25D366;
+  --me-bg:#DCF8C6;
+  --other-bg:#fff;
+  --text:#111;
+  --muted:#777;
+}
+*{box-sizing:border-box}
+body,html{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;}
+/* Container */
+.chat-root{display:flex;flex-direction:column;height:100vh;background:#ECE5DD;}
+/* Header */
+.chat-header{display:flex;align-items:center;justify-content:space-between;padding:12px;background:var(--primary);color:#fff;position:relative;}
+.chat-left{display:flex;align-items:center;gap:10px;}
+.profile-avatar{width:44px;height:44px;border-radius:50%;background:#ddd;display:flex;align-items:center;justify-content:center;font-weight:700;}
+.chat-title{font-weight:600;}
+.chat-status{font-size:12px;color:rgba(255,255,255,0.9);}
+.header-actions{display:flex;gap:14px;align-items:center;font-size:18px;}
+.header-actions button{background:transparent;border:none;color:#fff;font-size:18px;cursor:pointer;}
+.header-menu{position:absolute;top:56px;right:12px;background:#fff;color:#000;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,0.15);display:none;min-width:200px;z-index:30;}
+.header-menu .menu-item{padding:10px;border-bottom:1px solid #eee;cursor:pointer;}
+.header-menu .menu-item:last-child{border-bottom:none;color:#c33;}
+/* Messages */
+.messages{flex:1;padding:12px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;}
+.msg-row{display:flex;gap:8px;align-items:flex-end;max-width:100%;}
+.msg-left{justify-content:flex-start;}
+.msg-right{justify-content:flex-end;align-self:flex-end;}
+.bubble{padding:8px 12px;border-radius:16px;max-width:75%;box-shadow:0 1px 0 rgba(0,0,0,0.06);position:relative;}
+.bubble.me{background:var(--me-bg);}
+.bubble.other{background:var(--other-bg);}
+.meta{font-size:11px;color:var(--muted);margin-top:6px;display:flex;gap:6px;align-items:center;justify-content:flex-end;}
+.bubble .text{white-space:pre-wrap;word-wrap:break-word;}
+.bubble img.media,.bubble video.media{max-width:320px;border-radius:8px;display:block;}
+.tick{font-size:12px;color:rgba(0,0,0,0.45);margin-left:6px;}
+.tick.read{color:#2196F3;}
+.small-muted{font-size:11px;color:var(--muted);}
+/* Input bar */
+.input-bar{display:flex;gap:8px;padding:10px;background:#fff;align-items:center;border-top:1px solid #ddd;}
+.input-bar .left-controls{display:flex;gap:6px;align-items:center;}
+.input{flex:1;padding:10px 12px;border-radius:24px;border:1px solid #ccc;}
+.send-btn{width:48px;height:48px;border-radius:50%;border:none;background:var(--accent);color:#fff;font-size:18px;cursor:pointer;}
+.attach-menu{position:absolute;bottom:72px;left:12px;background:#fff;border-radius:8px;padding:8px;box-shadow:0 8px 24px rgba(0,0,0,0.12);display:none;z-index:40;}
+.attach-menu button{display:block;padding:8px;border:none;background:transparent;width:100%;text-align:left;cursor:pointer;}
+/* Message menu (long press) */
+.msg-menu{position:absolute;background:#fff;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,0.12);z-index:50;display:none;min-width:180px;}
+.msg-menu .mi{padding:8px;cursor:pointer;border-bottom:1px solid #eee;}
+.msg-menu .mi:last-child{border-bottom:none;color:#c33;}
+/* Reply preview */
+.reply-preview{background:#fff;padding:8px;border-radius:8px;border-left:4px solid var(--primary);margin-bottom:6px;font-size:13px;}
+/* small util */
+.hidden{display:none!important;}
+.center{display:flex;align-items:center;justify-content:center;}
+.reaction-bar{display:flex;gap:6px;padding:6px;background:#fff;border-radius:20px;box-shadow:0 6px 18px rgba(0,0,0,0.08);}
+.reaction{padding:6px 8px;border-radius:12px;cursor:pointer;}
+/* media viewer */
+.viewer{position:fixed;inset:0;background:rgba(0,0,0,0.9);display:none;align-items:center;justify-content:center;z-index:100;}
+.viewer img,.viewer video{max-width:95%;max-height:95%;}
+/* message info popup */
+.info-popup{position:fixed;background:#fff;border-radius:8px;padding:12px;box-shadow:0 8px 30px rgba(0,0,0,0.15);z-index:60;display:none;}
+</style>
+
+<div id="chatPage" class="chat-root">
+
+  <!-- HEADER -->
+  <div class="chat-header">
+    <div class="chat-left">
+      <div class="profile-avatar" id="avatarEl">A</div>
+      <div>
+        <div class="chat-title" id="chatTitle">Contact</div>
+        <div class="chat-status" id="chatStatus">last seen recently</div>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <button id="callBtn" title="Voice call">📞</button>
+      <button id="videoBtn" title="Video call">🎥</button>
+      <button id="headerMenuBtn" title="Options">⋮</button>
+    </div>
+
+    <div class="header-menu" id="headerMenu">
+      <div class="menu-item" onclick="openContactInfo()">View contact</div>
+      <div class="menu-item" onclick="openMedia()">Media, links, docs</div>
+      <div class="menu-item" onclick="openSearch()">Search</div>
+      <div class="menu-item" onclick="toggleMute()">Mute notifications</div>
+      <div class="menu-item" onclick="openTheme()">Chat theme</div>
+      <div class="menu-item" onclick="reportConversation()">Report</div>
+    </div>
+  </div>
+
+  <!-- MESSAGES -->
+  <div class="messages" id="messages"></div>
+
+  <!-- MEDIA VIEWER -->
+  <div class="viewer" id="viewer">
+    <img id="viewerImg" alt="media">
+    <video id="viewerVideo" controls></video>
+  </div>
+
+  <!-- INFO POPUP -->
+  <div class="info-popup" id="infoPopup"></div>
+
+  <!-- INPUT / ATTACH -->
+  <div style="position:relative">
+    <div class="attach-menu" id="attachMenu">
+      <button onclick="triggerCamera()">Camera</button>
+      <button onclick="triggerGallery()">Gallery</button>
+      <button onclick="triggerDoc()">Document</button>
+      <button onclick="sendLocation()">Send location</button>
+      <button onclick="sendContact()">Send contact</button>
+    </div>
+
+    <div class="input-bar">
+      <div class="left-controls">
+        <button id="attachBtn" title="Attach">📎</button>
+        <button id="micBtn" title="Voice note">🎤</button>
+      </div>
+      <input id="chatInput" class="input" placeholder="Type a message" autocomplete="off">
+      <button id="sendBtn" class="send-btn" title="Send">➤</button>
+    </div>
+  </div>
+
+  <!-- Hidden inputs for attachments -->
+  <input type="file" id="galleryInput" accept="image/*,video/*" multiple class="hidden">
+  <input type="file" id="cameraInput" accept="image/*" capture="environment" class="hidden">
+  <input type="file" id="docInput" accept=".pdf,.doc,.docx,.ppt,.pptx,.txt,.zip" class="hidden">
+
+  <!-- Message menu (long-press popup) -->
+  <div class="msg-menu" id="msgMenu">
+    <div class="mi" data-action="reply">Reply</div>
+    <div class="mi" data-action="forward">Forward</div>
+    <div class="mi" data-action="star">Star</div>
+    <div class="mi" data-action="info">Info</div>
+    <div class="mi" data-action="delete">Delete</div>
+    <div class="mi" data-action="report" style="color:#c33">Report</div>
+  </div>
+
+</div>
+
+<!-- ================== CHAT LOGIC (module) ================== -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getFirestore, collection, query, orderBy, limit, onSnapshot, addDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-storage.js";
+
+// ====== Firebase config ======
+const firebaseConfig = {
+  apiKey: "AIzaSyD8-JOU1GSyVrjPf43UBBakwOgmaDLjCxA",
+  authDomain: "mega-910bd.firebaseapp.com",
+  projectId: "mega-910bd",
+  storageBucket: "mega-910bd.appspot.com",
+  messagingSenderId: "1077865554196",
+  appId: "1:1077865554196:web:235e3c9bf3f1f57953e201"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const storage = getStorage(app);
+
+// ====== State ======
+let currentChatId = null;
+let currentUser = localStorage.getItem('loggedInUser') || 'me';
+let messagesListener = null;
+
+// ====== DOM ======
+const chatMessages = document.getElementById('messages');
+const chatInput = document.getElementById('chatInput');
+const sendBtn = document.getElementById('sendBtn');
+
+// ====== Send message ======
+async function sendMessage(text = '', type = 'text', extra = {}) {
+  if (!currentChatId) return;
+  const messagesCol = collection(db, `chats/${currentChatId}/messages`);
+  const payload = {
+    from: currentUser,
+    text,
+    type,
+    ts: Date.now(),
+    deliveredBy: [],
+    readBy: [],
+    reactions: {},
+    ...extra
+  };
+  await addDoc(messagesCol, payload);
+}
+
+// ====== Listen messages ======
+function startListeningMessages(limitNum = 50) {
+  if (!currentChatId) return;
+  if (messagesListener) messagesListener(); // detach previous
+  chatMessages.innerHTML = '';
+  const messagesCol = collection(db, `chats/${currentChatId}/messages`);
+  const q = query(messagesCol, orderBy('ts', 'desc'), limit(limitNum));
+  messagesListener = onSnapshot(q, (snap) => {
+    chatMessages.innerHTML = '';
+    snap.forEach(docSnap => {
+      const msg = docSnap.data();
+      const div = document.createElement('div');
+      div.style.alignSelf = msg.from === currentUser ? 'flex-end' : 'flex-start';
+      div.style.padding = '8px 12px';
+      div.style.margin = '4px';
+      div.style.borderRadius = '12px';
+      div.style.background = msg.from === currentUser ? '#DCF8C6' : '#fff';
+      div.textContent = msg.text || '';
+      chatMessages.appendChild(div);
+    });
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  });
+}
+
+// ====== Open chat ======
+window.openChat = function(chatId) {
+  currentChatId = chatId;
+  chatMessages.innerHTML = '';
+  startListeningMessages();
+}
+
+// ====== Send button ======
+sendBtn.addEventListener('click', async () => {
+  const text = chatInput.value.trim();
+  if (text) await sendMessage(text, 'text');
+  chatInput.value = '';
+});
+
+// ====== Enter key ======
+chatInput.addEventListener('keypress', e => {
+  if (e.key === 'Enter') sendBtn.click();
+});
+</script>
+<!-- ========== END CHAT MODULE ========== -->
+  </div>
+
+</div>
+
+<!-- YOUR ORIGINAL SCRIPT (ends with ONLY one }) -->
+<script>
+  const chatMessages = document.getElementById('chatMessages');
+  const chatInput = document.getElementById('chatInput');
+  const sendBtn = document.getElementById('sendBtn');
+  const chatTitle = document.getElementById('chatTitle');
+
+  function openChat(name) {
+    chatTitle.textContent = name;
+    chatMessages.innerHTML = '';
+    document.getElementById('homePage').style.display = 'none';
+    document.getElementById('chatPage').style.display = 'flex';
+  }
+
+  // Send a message
+  function sendMessage(text, fromYou = true) {
+    const msgDiv = document.createElement('div');
+    msgDiv.textContent = text;
+    msgDiv.style.maxWidth = '70%';
+    msgDiv.style.padding = '8px 12px';
+    msgDiv.style.borderRadius = '15px';
+    msgDiv.style.alignSelf = fromYou ? 'flex-end' : 'flex-start';
+    msgDiv.style.background = fromYou ? '#DCF8C6' : '#fff';
+    msgDiv.style.boxShadow = '0 1px 1px rgba(0,0,0,0.2)';
+    chatMessages.appendChild(msgDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  sendBtn.addEventListener('click', () => {
+    const text = chatInput.value.trim();
+    if (!text) return;
+    sendMessage(text, true);
+    chatInput.value = '';
+    // Simulate a reply
+    setTimeout(() => sendMessage('Fake reply: ' + text, false), 800);
+  });
+
+  chatInput.addEventListener('keypress', e => {
+    if (e.key === 'Enter') sendBtn.click();
+  });
+
+  // Add event listeners to chat items (replace your previous ones)
+  document.querySelectorAll('#chatList > div').forEach(chat => {
+    chat.addEventListener('click', () => {
+      const name = chat.querySelector('div:nth-child(2) div:first-child').textContent;
+      openChat(name);
+    });
+  });
+</script>
+<!-- NEW SCRIPT ONLY FOR MENU -->
+<script>
+  const chatMenu = document.getElementById('chatMenu');
+
+  function toggleMenu() {
+    chatMenu.style.display = chatMenu.style.display === 'block' ? 'none' : 'block';
+  }
+
+  // Close menu when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('#chatMenu') && !e.target.closest('div[onclick="toggleMenu()"]')) {
+      chatMenu.style.display = 'none';
+    }
+  });
+</script>
+
+<!-- ADDED STYLE FOR MENU ITEMS -->
+<style>
+  .menu-item {
+    padding: 10px;
+    cursor: pointer;
+  }
+  .menu-item:hover {
+    background: #f1f1f1;
+    });
+  });
+</script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getFirestore, doc, setDoc, getDoc, onSnapshot, updateDoc, deleteField } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD8-JOU1GSyVrjPf43UBBakwOgmaDLjCxA",
+  authDomain: "mega-910bd.firebaseapp.com",
+  projectId: "mega-910bd",
+  storageBucket: "mega-910bd.firebasestorage.app",
+  messagingSenderId: "1077865554196",
+  appId: "1:1077865554196:web:235e3c9bf3f1f57953e201"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// ==================== ADMIN FUNCTIONS ====================
+
+// Ban a user by phone number
+async function banUser(phone) {
+  await setDoc(doc(db, "bannedUsers", phone), { banned: true });
+  updateUIForBan(phone);
+}
+
+// Unban a user
+async function unbanUser(phone) {
+  await deleteField(doc(db, "bannedUsers", phone));
+  updateUIForBan(phone);
+}
+
+// Verify a user (TikTok-style blue check)
+async function verifyUser(phone) {
+  await setDoc(doc(db, "verified", phone), { verified: true });
+}
+
+// Unverify a user
+async function unverifyUser(phone) {
+  await deleteField(doc(db, "verified", phone));
+}
+
+// ==================== UI UPDATES ====================
+
+// Update ban state on all pages
+function updateUIForBan(phone) {
+  const elems = document.querySelectorAll(`[data-phone='${phone}']`);
+  elems.forEach(el => {
+    let banNotice = el.querySelector(".banNotice");
+    if (!banNotice) {
+      banNotice = document.createElement("div");
+      banNotice.textContent = "⚠️ Your account was banned for not following our rules. Request review.";
+      banNotice.style.color = "#cc3333";
+      banNotice.style.fontWeight = "bold";
+      banNotice.style.marginTop = "5px";
+      banNotice.classList.add("banNotice");
+      el.appendChild(banNotice);
+
+      // Add request review button
+      const btn = document.createElement("button");
+      btn.textContent = "Request Review";
+      btn.style.marginTop = "5px";
+      btn.onclick = () => openReviewBox(phone);
+      banNotice.appendChild(btn);
+    }
+  });
+}
+
+// Show review box
+function openReviewBox(phone) {
+  const reviewBox = document.createElement("div");
+  reviewBox.style.position = "fixed";
+  reviewBox.style.top = "50%";
+  reviewBox.style.left = "50%";
+  reviewBox.style.transform = "translate(-50%, -50%)";
+  reviewBox.style.background = "#fff";
+  reviewBox.style.border = "1px solid #ccc";
+  reviewBox.style.padding = "20px";
+  reviewBox.style.borderRadius = "8px";
+  reviewBox.style.zIndex = 2000;
+
+  const textarea = document.createElement("textarea");
+  textarea.placeholder = "Write your review...";
+  textarea.style.width = "100%";
+  textarea.style.height = "80px";
+
+  const upload = document.createElement("input");
+  upload.type = "file";
+  upload.style.marginTop = "10px";
+
+  const sendBtn = document.createElement("button");
+  sendBtn.textContent = "Send Review";
+  sendBtn.style.marginTop = "10px";
+  sendBtn.onclick = async () => {
+    await setDoc(doc(db, "reports", `${phone}_${Date.now()}`), {
+      phone,
+      message: textarea.value,
+      timestamp: new Date().toISOString()
+    });
+    alert("Sent review");
+    document.body.removeChild(reviewBox);
+  };
+
+  const cancelBtn = document.createElement("button");
+  cancelBtn.textContent = "Cancel";
+  cancelBtn.style.marginLeft = "10px";
+  cancelBtn.onclick = () => document.body.removeChild(reviewBox);
+
+  reviewBox.appendChild(textarea);
+  reviewBox.appendChild(upload);
+  reviewBox.appendChild(sendBtn);
+  reviewBox.appendChild(cancelBtn);
+  document.body.appendChild(reviewBox);
+}
+
+// Listen for verification changes and show TikTok-style badge
+function listenForVerification(phone) {
+  onSnapshot(doc(db, "verified", phone), (snap) => {
+    const userElems = document.querySelectorAll(`[data-phone='${phone}']`);
+    userElems.forEach(el => {
+      if (snap.exists()) {
+        if (!el.querySelector(".verifyBadge")) {
+          const badge = document.createElement("span");
+          badge.textContent = "✔️";
+          badge.style.color = "#20D5EC";
+          badge.style.marginLeft = "6px";
+          badge.classList.add("verifyBadge");
+          el.appendChild(badge);
+        }
+      } else {
+        const existing = el.querySelector(".verifyBadge");
+        if (existing) existing.remove();
+      }
+    });
+  });
+}
+
+// Automatically listen for bans to update UI
+onSnapshot(doc(db, "bannedUsers", "list"), (snap) => {
+  if (snap.exists()) {
+    const bannedNumbers = Object.keys(snap.data());
+    bannedNumbers.forEach(updateUIForBan);
+  }
+});
+
+// ==================== EXPORTS FOR BUTTONS ====================
+
+window.adminControls = {
+  banUser,
+  unbanUser,
+  verifyUser,
+  unverifyUser,
+  listenForVerification
+};
+</script>
+<!-- Global Day/Night Theme Toggle for MEGA -->
+<script>
+  // Default theme
+  let currentTheme = localStorage.getItem('megaTheme') || 'light';
+
+  // Function to apply theme
+  function applyTheme(theme) {
+    const pages = document.querySelectorAll('.card, body'); // all pages/cards
+    if (theme === 'dark') {
+      document.documentElement.style.setProperty('--bg-color', '#121212');
+      document.documentElement.style.setProperty('--text-color', '#EDEDED');
+      document.documentElement.style.setProperty('--card-bg', '#1E1E1E');
+      document.documentElement.style.setProperty('--accent-color', '#25D366');
+    } else {
+      document.documentElement.style.setProperty('--bg-color', '#FFFFFF');
+      document.documentElement.style.setProperty('--text-color', '#000000');
+      document.documentElement.style.setProperty('--card-bg', '#F0F0F0');
+      document.documentElement.style.setProperty('--accent-color', '#25D366');
+    }
+
+    // Apply variables to all pages dynamically
+    pages.forEach(el => {
+      el.style.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue('--bg-color');
+      el.style.color = getComputedStyle(document.documentElement).getPropertyValue('--text-color');
+    });
+  }
+
+  // Apply initial theme on page load
+  document.addEventListener('DOMContentLoaded', () => {
+    applyTheme(currentTheme);
+
+    const themeSwitch = document.getElementById('themeSwitch');
+    if (themeSwitch) {
+      // Set initial icon
+      themeSwitch.innerHTML = currentTheme === 'dark' ? '🌙' : '☀️';
+
+      // Switch on click
+      themeSwitch.addEventListener('click', () => {
+        currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+        localStorage.setItem('megaTheme', currentTheme);
+        applyTheme(currentTheme);
+        themeSwitch.innerHTML = currentTheme === 'dark' ? '🌙' : '☀️';
+      });
+    }
+  });
+</script>
+
+<!-- CSS for smoother transition -->
+<style>
+  :root {
+    --bg-color: #FFFFFF;
+    --text-color: #000000;
+    --card-bg: #F0F0F0;
+    --accent-color: #25D366;
+  }
+
+  body, .card {
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  #themeSwitch {
+    cursor: pointer;
+    font-size: 1.5em;
+    user-select: none;
+  }
+</style>
+<!-- Your HTML content here -->
+<body>
+
+  <!-- HOME PAGE -->
+  <div id="homePage">
+    <!-- Your user list goes here -->
+    <div class="user-item" data-name="Alice">
+    </div>
+    <div class="user-item" data-name="Bob"><div>
+    <!-- Add more users -->
+  </div>
+
+  <!-- CHAT PAGE -->
+  <div id="chatPage" style="display:none;">
+    <!-- Your full chat HTML here (header, messages, input bar, etc.) -->
+  </div>
+
+  <!-- Scripts -->
+  <script src="your-chat-scripts.js"></script>
+  <script>
+    // The openChat / click handlers script goes here
+  </script>
+
+</body>
+<script>
+const homePage = document.getElementById('homePage');
+const chatPage = document.getElementById('chatPage');
+
+// Open chat function
+function openChat(userName) {
+  homePage.style.display = 'none'; // hide home
+  chatPage.style.display = 'flex';  // show chat
+  document.getElementById('chatTitle').textContent = userName;
+  document.getElementById('chatInput').focus();
+}
+
+// Attach click to all user items
+document.querySelectorAll('.user-item').forEach(item => {
+  item.addEventListener('click', (e) => {
+    e.preventDefault();       // prevent default action
+    e.stopPropagation();      // stop bubbling
+    const name = item.dataset.name || 'Contact';
+    openChat(name);
+  });
+});
+
+// Back button in chat
+document.getElementById('chatBackBtn')?.addEventListener('click', () => {
+  chatPage.style.display = 'none';
+  homePage.style.display = 'block';
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // Elements
+  const homePage = document.getElementById('homePage');
+  const chatPage = document.getElementById('chatPage');
+  const chatTitle = document.getElementById('chatTitle');
+  const avatarEl = document.getElementById('avatarEl');
+  const chatBackBtn = document.getElementById('chatBackBtn'); // optional
+  const chatInput = document.getElementById('chatInput');
+  const micBtn = document.getElementById('micBtn');
+  const sendBtn = document.getElementById('sendBtn');
+
+  // Safeguard: ensure chatPage hidden initially
+  if (chatPage) {
+    chatPage.style.display = chatPage.style.display === 'flex' || chatPage.style.display === 'block'
+      ? chatPage.style.display
+      : 'none';
+  }
+
+  // Utility to show chat
+  window.openChat = function(contactId, contactName) {
+    // store active chat so your firebase code can read it
+    if (contactId) localStorage.setItem('activeChatWith', contactId);
+
+    // show/hide pages
+    if (homePage) homePage.style.display = 'none';
+    if (chatPage) chatPage.style.display = 'flex'; // matches your CSS .chat-root
+
+    // update header
+    if (chatTitle) chatTitle.textContent = contactName || contactId || 'Contact';
+    if (avatarEl) avatarEl.textContent = (contactName || contactId || 'C').charAt(0).toUpperCase();
+
+    // focus input
+    if (chatInput) chatInput.focus();
+  };
+
+  // Utility to close chat (go back)
+  window.closeChat = function() {
+    if (chatPage) chatPage.style.display = 'none';
+    if (homePage) homePage.style.display = 'block';
+  };
+
+  // Attach back button
+  if (chatBackBtn) {
+    chatBackBtn.addEventListener('click', () => {
+      window.closeChat();
+    });
+  }
+
+  // Attach click handler to user list (delegation). 
+  // Your user items should have class "user-item" and data attributes: data-id and data-name (recommended).
+  (function attachUserClicks() {
+    const container = homePage || document;
+    container.addEventListener('click', (ev) => {
+      const item = ev.target.closest('.user-item');
+      if (!item) return;
+      ev.preventDefault();
+      ev.stopPropagation();
+      // read data attributes (fallback to innerText)
+      const id = item.dataset.id || item.dataset.name || item.getAttribute('data-id') || item.textContent.trim();
+      const name = item.dataset.name || item.dataset.display || item.textContent.trim();
+      window.openChat(id, name);
+    });
+  })();
+
+  // Send arrow toggle: mic shown when input empty, send shown when typing
+  if (chatInput && micBtn && sendBtn) {
+    // initial state
+    if (chatInput.value && chatInput.value.trim() !== '') {
+      micBtn.style.display = 'none';
+      sendBtn.style.display = 'inline-block';
+    } else {
+      micBtn.style.display = 'inline-block';
+      sendBtn.style.display = 'none';
+    }
+
+    chatInput.addEventListener('input', () => {
+      if (chatInput.value.trim() !== '') {
+        micBtn.style.display = 'none';
+        sendBtn.style.display = 'inline-block';
+      } else {
+        micBtn.style.display = 'inline-block';
+        sendBtn.style.display = 'none';
+      }
+    });
+  }
+
+  // Optional: if your page navigations re-create DOM, ensure re-hide on load
+  window.addEventListener('load', () => {
+    if (chatPage && !localStorage.getItem('activeChatWith')) {
+      chatPage.style.display = 'none';
+      if (homePage) homePage.style.display = 'block';
+    }
+  });
+});
+</script>
+</body>
+</html>
+
