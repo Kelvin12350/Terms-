@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>MEGA Chat – Connect Freely</title>
+
+  <!-- Firebase (ES modules) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+    // ---------- your Firebase config (from your message) ----------
+    const firebaseConfig = {
+      apiKey: "AIzaSyD8-JOU1GSyVrjPf43UBBakwOgmaDLjCxA",
+      authDomain: "mega-910bd.firebaseapp.com",
+      projectId: "mega-910bd",
+      storageBucket: "mega-910bd.firebasestorage.app",
+      messagingSenderId: "1077865554196",
+      appId: "1:1077865554196:web:235e3c9bf3f1f57953e201"
+    };
+    // ----------------------------------------------------------------
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Expose a function to the page to save a report
+    window.sendReportToFirestore = async (reportData) => {
+      try {
+        await addDoc(collection(db, "reports"), {
+          ...reportData,
+          createdAt: serverTimestamp()
+        });
+        return { ok: true };
+      } catch (err) {
+        console.error("Firestore addDoc error:", err);
+        return { ok: false, error: err };
+      }
+    };
+  </script>
+
+  <style>
+    :root{
+      --accent: #25D366;
+      --accent-dark: #1DA851;
+      --bg: #f4f6f8;
+      --card: #ffffff;
+      --muted: #666;
+      --max-width: 980px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background:var(--bg);
+      color:#111;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      line-height:1.6;
+    }
+
+    header{
+      background:linear-gradient(90deg,var(--accent),#2bd07a);
+      color:white;
+      padding:18px 16px;
+      text-align:left;
+      display:flex;
+      align-items:center;
+      gap:12px;
+      box-shadow:0 3px 10px rgba(0,0,0,0.08);
+      position:sticky;
+      top:0;
+      z-index:50;
+    }
+    header .brand {
+      font-weight:700;
+      font-size:1.2rem;
+      letter-spacing:0.4px;
+    }
+    header .subtitle {
+      margin-left:auto;
+      font-size:0.9rem;
+      opacity:0.95;
+      padding-right:12px;
+    }
+
+    main{
+      max-width:var(--max-width);
+      margin:32px auto;
+      background:var(--card);
+      border-radius:14px;
+      padding:32px;
+      box-shadow:0 8px 30px rgba(12,18,24,0.06);
+    }
+
+    h1{ margin:0 0 12px 0; color: #0b3a2b }
+    h2{ color:var(--accent); margin-top:26px; }
+
+    .video-wrap{
+      width:100%;
+      max-width:820px;
+      margin:18px auto;
+      border-radius:12px;
+      overflow:hidden;
+      box-shadow:0 8px 30px rgba(2,10,5,0.06);
+    }
+    iframe{
+      width:100%;
+      height:450px;
+      border:0;
+      display:block;
+    }
+
+    /* The very long message area */
+    .long-text{
+      font-size:1.02rem;
+      color:#1d1d1d;
+      white-space:pre-wrap;
+      margin-top:8px;
+    }
+    .support-inline{
+      color:var(--accent);
+      font-weight:700;
+      cursor:pointer;
+      text-decoration:underline;
+    }
+
+    /* Corner floating buttons */
+    .corner-buttons{
+      position:fixed;
+      right:18px;
+      bottom:18px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      z-index:999;
+    }
+    .corner-buttons button,
+    .corner-buttons a{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      background:var(--accent);
+      color:white;
+      padding:12px 16px;
+      border-radius:999px;
+      border:none;
+      font-weight:600;
+      box-shadow:0 8px 20px rgba(0,0,0,0.12);
+      cursor:pointer;
+      text-decoration:none;
+      min-width:64px;
+      transition:transform .12s ease, background .12s ease;
+    }
+    .corner-buttons button:hover,
+    .corner-buttons a:hover{ transform:translateY(-3px); background:var(--accent-dark); }
+
+    footer{
+      max-width:var(--max-width);
+      margin:28px auto 56px;
+      text-align:center;
+      color:var(--muted);
+      font-size:0.95rem;
+    }
+
+    /* Modal styles (report + support) */
+    .modal-backdrop{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.48);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:1000;
+      padding:20px;
+    }
+    .modal{
+      width:100%;
+      max-width:520px;
+      background:white;
+      border-radius:12px;
+      padding:20px;
+      box-shadow:0 18px 50px rgba(0,0,0,0.2);
+    }
+    .modal h3{ margin:0 0 10px 0; }
+    .field{ margin:10px 0; }
+    input[type="text"], input[type="email"], textarea{
+      width:100%;
+      padding:10px 12px;
+      border-radius:8px;
+      border:1px solid #dbe3df;
+      font-size:1rem;
+      resize:vertical;
+    }
+    .row{ display:flex; gap:10px; }
+    .btn{
+      background:var(--accent);
+      color:white;
+      border:none;
+      padding:10px 14px;
+      border-radius:8px;
+      cursor:pointer;
+      font-weight:700;
+    }
+    .btn.secondary{ background:#f1f1f1; color:#333; box-shadow:none; }
+    .note{ font-size:0.9rem; color:#666; margin-top:8px; }
+
+    @media (max-width:760px){
+      iframe{ height:260px; }
+      main{ margin:18px 12px; padding:20px; }
+      .corner-buttons{ right:12px; bottom:12px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header id="top">
+    <div class="brand">MEGA Chat</div>
+    <div class="subtitle">Private • Real-time • Peer-to-peer</div>
+  </header>
+
+  <main>
+    <h1>Welcome to MEGA — Connect Freely</h1>
+
+    <div class="long-text" id="longText">
+      <!-- LONG MESSAGE: generated below by JS to avoid huge HTML payload -->
+    </div>
+
+    <h2>App Preview</h2>
+<div class="video-wrap">
+  <!-- Replace VIDEO_ID with your YouTube video ID -->
+  <iframe 
+    width="560" 
+    height="315" 
+    src="https://www.youtube.com/embed/-8bx-a5TlYk?si=F-q2an-_TTL7qMan" 
+    title="MEGA Chat Demo" 
+    frameborder="0" 
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+    allowfullscreen>
+  </iframe>
+</div>
+
+    <p class="note">If you need help, tap the <span style="font-weight:700;color:var(--accent)">Support</span> link inside the message above — it will open a quick support box.</p>
+  </main>
+
+  <!-- Corner floating buttons -->
+  <div class="corner-buttons" aria-hidden="false">
+    <a href="#top" title="Home">🏠 Home</a>
+    <button id="reportBtn" title="Report">🚨 Report</button>
+    <a id="contactBtn" href="mailto:support@example.com" title="Contact">✉️ Contact</a>
+  </div>
+
+  <footer>© 2025 MEGA Chat — Built for secure and real-time connection</footer>
+
+  <!-- REPORT Modal (connected to Firebase) -->
+  <div id="reportModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal" role="document" aria-labelledby="reportTitle">
+      <h3 id="reportTitle">Report an Issue / Abuse</h3>
+      <div class="field">
+        <label for="rname">Your name (optional)</label>
+        <input id="rname" type="text" placeholder="Your name">
+      </div>
+      <div class="field">
+        <label for="remail">Your email (optional)</label>
+        <input id="remail" type="email" placeholder="you@example.com">
+      </div>
+      <div class="field">
+        <label for="rmessage">Describe the problem</label>
+        <textarea id="rmessage" rows="5" placeholder="What happened? Be as detailed as you can..."></textarea>
+      </div>
+      <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:6px;">
+        <button class="btn secondary" onclick="closeReportModal()">Cancel</button>
+        <button class="btn" onclick="submitReport()">Send Report</button>
+      </div>
+      <p class="note">Reports are saved securely to Firestore and are viewable in your admin panel.</p>
+    </div>
+  </div>
+
+  <!-- SUPPORT Modal (opens mailto on send) -->
+  <div id="supportModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal" role="document" aria-labelledby="supportTitle">
+      <h3 id="supportTitle">Contact Support</h3>
+      <div class="field">
+        <label for="smessage">Type your message to support</label>
+        <textarea id="smessage" rows="6" placeholder="Describe your issue or question..."></textarea>
+      </div>
+      <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:6px;">
+        <button class="btn secondary" onclick="closeSupportModal()">Cancel</button>
+        <button class="btn" onclick="sendSupportEmail()">Send Message</button>
+      </div>
+      <p class="note">When you press <strong>Send Message</strong> your email client will open with the message prepared. (You can edit the email before sending.)</p>
+    </div>
+  </div>
+
+  <script>
+    /***********************
+     * LONG MESSAGE BUILDER
+     * We'll programmatically create a very long "About" message and inject a clickable "Support" link inside.
+     ***********************/
+    (function buildLongMessage() {
+      // A single meaningful paragraph (approx ~700-1200 chars)
+      const paragraphs = [
+`MEGA Chat is a next-generation private messenger created to restore human connection and protect user privacy. At the heart of MEGA is a simple belief: conversations belong to the people having them. We designed MEGA to use peer-to-peer connections for messages and calls, minimizing centralized storage and data collection. This approach keeps your chats local to your devices while still giving you fast, real-time communication across the world.`,
+`Privacy and security are not afterthoughts — they are MEGA’s foundation. We do not store message histories on our servers, and we do not scan or sell your data. The app uses modern WebRTC technology for calls and a secure signaling mechanism for connections. Status updates, “last seen,” and profile data are shared only with your saved contacts, not publicly.`,
+`MEGA supports text messages, voice notes, photos, files, and high-quality voice & video calls. Our lightweight design keeps data usage low and performance high — even on slower networks. The app also includes small social features such as ephemeral statuses visible only to saved contacts, and a verification flow for trusted public accounts or admin numbers.`,
+`We aim to be transparent: MEGA requests only essential permissions. We publish straightforward terms and a clear privacy policy. If anything unexpected happens or a feature feels confusing, our support team is ready to help. For technical problems, bugs, or reports of abuse, MEGA provides a reporting mechanism directly accessible from our website and inside the app.`,
+`MEGA strives to be inclusive and accessible. We continue to improve usability by listening to feedback, prioritizing stability, and removing friction from common tasks: sending files, starting calls, and verifying contacts. We believe powerful privacy should also be simple and fast.`,
+`If you rely on messaging for work, community organizing, or keeping in touch with family, you can trust MEGA to put control in your hands. We work hard to make updates reliable, maintain clear release notes, and preserve backward compatibility when possible. We welcome contributors and security researchers to responsibly disclose potential vulnerabilities so we can patch issues quickly.`
+      ];
+
+      // Build an extended message by repeating the block and adding small variations to make it feel natural.
+      let longText = "";
+      const targetApproxChars = 40000; // large — substantial long text while being practical
+      while (longText.length < targetApproxChars) {
+        // append each paragraph in order, but occasionally insert small variations
+        for (let i=0;i<paragraphs.length && longText.length < targetApproxChars;i++){
+          longText += paragraphs[i] + "\n\n";
+          // Occasionally insert a short "how-to" paragraph
+          if (Math.random() < 0.25) {
+            longText += "How to use MEGA: Install, register with your phone number, allow microphone/camera for calls if you want to use voice/video features, add saved contacts, and start chatting. Use the Report button for bugs or abusive content, and tap Support if you need help from our team.\n\n";
+          }
+        }
+        // small separator to avoid repetition feeling exactly the same
+        longText += "— — —\n\n";
+      }
+
+      // Insert a visible Support link roughly in the first third
+      const marker = "<span class='support-inline' id='inlineSupport'>Support</span>";
+      // place it after ~20% of the text
+      const insertAt = Math.floor(longText.length * 0.20);
+      const injected = longText.slice(0, insertAt) + marker + longText.slice(insertAt);
+
+      // render to page
+      document.getElementById("longText").innerHTML = injected;
+
+      // attach click to open support modal
+      const inline = document.getElementById("inlineSupport");
+      if (inline) inline.addEventListener("click", openSupportModal);
+    })();
+
+    /***********************
+     * Modal open/close helpers
+     ***********************/
+    function openReportModal(){
+      const m = document.getElementById('reportModal');
+      m.style.display = 'flex';
+      m.setAttribute('aria-hidden', 'false');
+    }
+    function closeReportModal(){
+      const m = document.getElementById('reportModal');
+      m.style.display = 'none';
+      m.setAttribute('aria-hidden', 'true');
+    }
+    function openSupportModal(){
+      const m = document.getElementById('supportModal');
+      m.style.display = 'flex';
+      m.setAttribute('aria-hidden', 'false');
+    }
+    function closeSupportModal(){
+      const m = document.getElementById('supportModal');
+      m.style.display = 'none';
+      m.setAttribute('aria-hidden', 'true');
+    }
+
+    // attach report button
+    document.getElementById('reportBtn').addEventListener('click', openReportModal);
+
+    /***********************
+     * Report submission: saves to Firestore via exposed function
+     ***********************/
+    async function submitReport(){
+      const name = document.getElementById('rname').value.trim();
+      const email = document.getElementById('remail').value.trim();
+      const message = document.getElementById('rmessage').value.trim();
+
+      if (!message) {
+        alert('Please describe the issue before sending the report.');
+        return;
+      }
+
+      // Basic payload
+      const payload = {
+        name: name || null,
+        email: email || null,
+        message,
+        source: 'website-report'
+      };
+
+      // call the exposed Firestore helper
+      try {
+        // window.sendReportToFirestore is defined in the Firebase module script
+        const res = await window.sendReportToFirestore(payload);
+        if (res && res.ok) {
+          alert('✅ Report sent. Thank you — our team will review it.');
+          // clear and close
+          document.getElementById('rname').value = '';
+          document.getElementById('remail').value = '';
+          document.getElementById('rmessage').value = '';
+          closeReportModal();
+        } else {
+          throw res.error || new Error('unknown');
+        }
+      } catch (err) {
+        console.error('Report submit error:', err);
+        alert('❌ Failed to send report. Please try again later.');
+      }
+    }
+
+    /***********************
+     * Support email: open mailto with typed message
+     ***********************/
+    function sendSupportEmail(){
+      const message = document.getElementById('smessage').value.trim();
+      if (!message) { alert('Please type your message before sending.'); return; }
+
+      // Placeholder email — replace with your real support email later
+      const supportEmail = 'chatmega435@gmail.com';
+
+      const subject = encodeURIComponent('MEGA Support Request');
+      // We prefill a header and then the message, also append small metadata (optional)
+      const bodyText = `Support message from MEGA website user:\n\n${message}\n\n---\nSent from MEGA website.`;
+      const body = encodeURIComponent(bodyText);
+
+      // Open mail client
+      const mailto = `mailto:${supportEmail}?subject=${subject}&body=${body}`;
+      window.location.href = mailto;
+
+      // Reset and close
+      document.getElementById('smessage').value = '';
+      closeSupportModal();
+    }
+
+    // Close modals on backdrop click
+    document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
+      backdrop.addEventListener('click', (e) => {
+        if (e.target === backdrop) {
+          // determine which modal
+          if (backdrop.id === 'reportModal') closeReportModal();
+          else if (backdrop.id === 'supportModal') closeSupportModal();
+          else {
+            // generic: hide
+            backdrop.style.display = 'none';
+            backdrop.setAttribute('aria-hidden','true');
+          }
+        }
+      });
+    });
+
+    // Simple keyboard close (Escape)
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeReportModal();
+        closeSupportModal();
+      }
+    });
+
+    // Make contact button open user-editable mailto (placeholder email)
+    // If you later want to set contact email dynamically, change href here:
+    document.getElementById('contactBtn').href = 'mailto:chatmega435@gmail.com';
+
+  </script>
+</body>
+</html>
