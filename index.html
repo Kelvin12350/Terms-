@@ -23645,7 +23645,6 @@ handleFileInteraction: async (msgId, url, fileName, r2Key, mediaType = 'document
       
 
 // --- 🌐 GLOBAL WINDOW ASSIGNMENTS ---
-// Connects your logic to the HTML 'onclick' events
 window.app = App;
 window.App = App;
 window.webrtc = webrtc;
@@ -23654,11 +23653,9 @@ window.auth = auth;
 
 // --- 🚀 BOOST WIZARD MAPPINGS (With Pause Logic) ---
 window.app.startBoost = () => { 
-    // 1. Pause Logic: Set flag and clear the active status timer
     state.isStatusPaused = true; 
     if (state.storyTimer) clearTimeout(state.storyTimer);
     
-    // 2. Visual Pause: Freeze the progress bar at its current width
     const fill = document.getElementById(`fill-${state.storyIndex}`);
     if (fill) {
         const currentWidth = window.getComputedStyle(fill).width;
@@ -23666,14 +23663,12 @@ window.app.startBoost = () => {
         fill.style.width = currentWidth;
     }
 
-    // 3. Open the Wizard
     state.boostStep = 1; 
     App.goToPage('boost-wizard-page'); 
     BoostEngine.renderStep(); 
 };
 
 window.app.exitBoostWizard = () => {
-    // Return to the viewer and resume playback
     App.goToPage('status-viewer-page');
     state.isStatusPaused = false;
     App.startStatusTimer(true); 
@@ -23689,18 +23684,54 @@ window.app.prevBoostStep = () => {
 };
 
 window.app.selectBoostOption = (val, el) => { 
-    // Context-aware selection
     if (state.boostStep === 1) state.boostData.goal = val;
     if (state.boostStep === 8) state.boostData.paymentMethod = val;
 
-    // UI Feedback
     document.querySelectorAll('.boost-option').forEach(opt => opt.classList.remove('active'));
     el.classList.add('active');
     App.showToast("Selected: " + val); 
 };
 
+// --- 📱 HARDWARE & SYSTEM BACK LOGIC ---
+const handleHardwareBack = async () => {
+    const activePage = document.querySelector('.page.active');
+    if (!activePage) return;
+
+    // 🏠 Pages where "Back" means "Exit"
+    const homePages = ['chat-list-page', 'home-page', 'main-feed'];
+    
+    if (homePages.includes(activePage.id)) {
+        App.showToast("Press back again to exit");
+    } else {
+        // 🔙 Specialized Back Logic
+        if (activePage.id === 'boost-wizard-page' && state.boostStep > 1) {
+            // Go to previous step in the wizard
+            state.boostStep--; 
+            BoostEngine.renderStep();
+        } else if (activePage.id === 'chat-room-page' || activePage.id === 'status-viewer-page') {
+            App.goToPage('chat-list-page');
+        } else if (activePage.id === 'shop-page' || activePage.id === 'wallet-page') {
+            App.goToPage('chat-list-page');
+        } else {
+            // Default "Safety" back route
+            App.goToPage('chat-list-page');
+        }
+    }
+};
+
+// Handle Android, iOS, and Browser
+if (window.Capacitor && Capacitor.isNativePlatform()) {
+    const { App: CapApp } = Capacitor.Plugins;
+    CapApp.addListener('backButton', () => {
+        handleHardwareBack();
+    });
+} else {
+    window.addEventListener('popstate', () => {
+        handleHardwareBack();
+    });
+}
+
 // --- 🏁 FINAL EXECUTION CALLS ---
-// These trigger the start of the application
 App.init();
 App.initLanguage();
 </script>
