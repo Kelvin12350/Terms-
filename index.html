@@ -17265,13 +17265,13 @@ submitBankWithdrawal: async () => {
     // --- 🛒 INTEGRATED SHOP & REWARDS SYSTEM ---
 
 buyItem: async (itemId) => {
-    // 1. Define USD Prices (Boost is set to approx 200 Naira)
+    // 1. Define Standard USD Prices
     const prices = {
-        'verification': 4.99,
+        'verification': 4.99, // Monthly Subscription
         'gold_name': 2.99,
         'banner': 1.99,
         'ghost': 3.99,
-        'boost': 0.1334, // 🌟 TEST PRICE: ~200 Naira ($0.1334 * 1500 = 200.1)
+        'boost': 0.99,
         'orbs_100': 1.99,
         'orbs_500': 4.99,
         'orbs_1000': 16.99,
@@ -17282,7 +17282,11 @@ buyItem: async (itemId) => {
     if (!price) return;
 
     // 2. Initial Confirmation
-    if (!confirm(`Confirm purchase of ${itemId.replace('_', ' ').toUpperCase()} for $${price}?`)) return;
+    const confirmMsg = itemId === 'verification' 
+        ? `Confirm $${price} monthly subscription for the Verification Badge?`
+        : `Confirm purchase of ${itemId.replace('_', ' ').toUpperCase()} for $${price}?`;
+
+    if (!confirm(confirmMsg)) return;
 
     // 3. Button State Management
     const btn = event.target;
@@ -17303,15 +17307,21 @@ buyItem: async (itemId) => {
 
             // --- 🛡️ APPLY FEATURES BASED ON ITEM ID ---
             if (itemId === 'verification') {
-                await updateDoc(userRef, { isVerified: true });
-                App.showToast("✅ Verification Badge Activated!");
+                // 📅 Set expiry to 30 days from now
+                const thirtyDays = 30 * 24 * 60 * 60 * 1000;
+                const expiry = Date.now() + thirtyDays;
+                
+                await updateDoc(userRef, { 
+                    isVerified: true,
+                    verificationExpires: expiry 
+                });
+                App.showToast("✅ Verification Active for 30 Days!");
             } 
             else if (itemId === 'gold_name') {
                 await updateDoc(userRef, { nameColor: 'gold' });
                 App.showToast("✅ Gold Name Activated!");
             }
             else if (itemId === 'boost') {
-                // 🌟 TEST LOGIC: Set a boost expiry for 24 hours
                 const expiry = Date.now() + (24 * 60 * 60 * 1000);
                 await updateDoc(userRef, { 
                     isBoosted: true,
@@ -17338,12 +17348,11 @@ buyItem: async (itemId) => {
             const freshData = newSnap.data();
             DataManager.saveProfile(freshData);
             
-            // 6. Update UI Instantly
+            // 6. Update UI
             btn.innerText = "Owned";
             btn.style.background = "#00C853"; 
             btn.style.color = "white";
             
-            // Update live balance labels
             const shopBal = document.getElementById('shop-balance');
             const walletBal = document.getElementById('wallet-orb-balance');
             if (shopBal) shopBal.innerText = freshData.orbs || 0;
@@ -17365,13 +17374,40 @@ buyItem: async (itemId) => {
         }
     });
 
-    // Reset button for safety
     setTimeout(() => {
         if (btn.innerText === "Processing...") {
             btn.innerText = originalText;
             btn.disabled = false;
         }
-    }, 8000); 
+    }, 10000); 
+},
+checkVerificationExpiry: async (profile) => {
+    // 1. Check if they even have a subscription
+    if (profile.isVerified && profile.verificationExpires) {
+        
+        // 2. Compare current time to expiry time
+        if (Date.now() > profile.verificationExpires) {
+            console.log("Subscription expired. Removing badge...");
+            
+            try {
+                const { doc, updateDoc } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js");
+                const userRef = doc(db, "users", profile.uid);
+
+                // 3. Update Database
+                await updateDoc(userRef, { isVerified: false });
+
+                // 4. Update Local Memory
+                profile.isVerified = false;
+                DataManager.saveProfile(profile);
+                
+                App.showToast("Your verification has expired.");
+                return false;
+            } catch (e) {
+                console.error("Expiry Sync Error:", e);
+            }
+        }
+    }
+    return profile.isVerified;
 },
 
 
@@ -23448,16 +23484,22 @@ handleFileInteraction: async (msgId, url, fileName, r2Key, mediaType = 'document
 
         saveSettings: () => App.saveSettings(), 
 
-        loadProfileData: () => {
+                loadProfileData: async () => {
             const data = DataManager.getProfile();
-            if(data) {
-                if(document.getElementById('edit-bio')) document.getElementById('edit-bio').value = data.bio || '';
-                if(document.getElementById('edit-job')) document.getElementById('edit-job').value = data.job || '';
-                if(document.getElementById('edit-company')) document.getElementById('edit-company').value = data.company || '';
-                if(document.getElementById('edit-school')) document.getElementById('edit-school').value = data.school || '';
-                if(document.getElementById('edit-city')) document.getElementById('edit-city').value = data.city || '';
-                if(data.photo && document.getElementById('edit-profile-preview')) {
-                    document.getElementById('edit-profile-preview').src = data.photo;
+            if(data && data.uid) {
+                // 🌟 1. Check if the Monthly Verification has expired
+                await App.checkVerificationExpiry(data);
+
+                // 🌟 2. Re-fetch data in case the check updated the status
+                const freshData = DataManager.getProfile();
+
+                if(document.getElementById('edit-bio')) document.getElementById('edit-bio').value = freshData.bio || '';
+                if(document.getElementById('edit-job')) document.getElementById('edit-job').value = freshData.job || '';
+                if(document.getElementById('edit-company')) document.getElementById('edit-company').value = freshData.company || '';
+                if(document.getElementById('edit-school')) document.getElementById('edit-school').value = freshData.school || '';
+                if(document.getElementById('edit-city')) document.getElementById('edit-city').value = freshData.city || '';
+                if(freshData.photo && document.getElementById('edit-profile-preview')) {
+                    document.getElementById('edit-profile-preview').src = freshData.photo;
                 }
             }
         }
