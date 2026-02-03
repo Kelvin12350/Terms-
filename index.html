@@ -17265,13 +17265,13 @@ submitBankWithdrawal: async () => {
     // --- 🛒 INTEGRATED SHOP & REWARDS SYSTEM ---
 
 buyItem: async (itemId) => {
-    // 1. Define real USD Prices
+    // 1. Define USD Prices (Boost is set to approx 200 Naira)
     const prices = {
         'verification': 4.99,
         'gold_name': 2.99,
         'banner': 1.99,
         'ghost': 3.99,
-        'boost': 0.15,
+        'boost': 0.1334, // 🌟 TEST PRICE: ~200 Naira ($0.1334 * 1500 = 200.1)
         'orbs_100': 1.99,
         'orbs_500': 4.99,
         'orbs_1000': 16.99,
@@ -17281,7 +17281,7 @@ buyItem: async (itemId) => {
     const price = prices[itemId];
     if (!price) return;
 
-    // 2. Initial Confirmation (Native Feel)
+    // 2. Initial Confirmation
     if (!confirm(`Confirm purchase of ${itemId.replace('_', ' ').toUpperCase()} for $${price}?`)) return;
 
     // 3. Button State Management
@@ -17309,6 +17309,15 @@ buyItem: async (itemId) => {
             else if (itemId === 'gold_name') {
                 await updateDoc(userRef, { nameColor: 'gold' });
                 App.showToast("✅ Gold Name Activated!");
+            }
+            else if (itemId === 'boost') {
+                // 🌟 TEST LOGIC: Set a boost expiry for 24 hours
+                const expiry = Date.now() + (24 * 60 * 60 * 1000);
+                await updateDoc(userRef, { 
+                    isBoosted: true,
+                    boostExpires: expiry
+                });
+                App.showToast("🚀 24h Profile Boost Activated!");
             }
             else if (itemId === 'banner') {
                 await updateDoc(userRef, { hasCustomBanner: true });
@@ -17340,10 +17349,8 @@ buyItem: async (itemId) => {
             if (shopBal) shopBal.innerText = freshData.orbs || 0;
             if (walletBal) walletBal.innerText = freshData.orbs || 0;
 
-            // Trigger haptic feedback
             if (navigator.vibrate) navigator.vibrate([50, 30, 50]);
 
-            // Refresh pages to reflect changes
             if (document.getElementById('wallet-page').classList.contains('active')) {
                 App.openWalletPage();
             }
@@ -17351,21 +17358,20 @@ buyItem: async (itemId) => {
 
         } catch (e) {
             console.error("Post-Payment Error:", e);
-            App.showToast("❌ Error updating profile. Contact support.");
+            App.showToast("❌ Error updating profile.");
             btn.innerText = originalText;
             btn.style.background = originalBg;
             btn.disabled = false;
         }
     });
 
-    // Reset button if user closes the Paystack popup without paying
-    // (Note: The Paystack 'onClose' handles the toast, but we reset button state here for safety)
+    // Reset button for safety
     setTimeout(() => {
         if (btn.innerText === "Processing...") {
             btn.innerText = originalText;
             btn.disabled = false;
         }
-    }, 5000); 
+    }, 8000); 
 },
 
 
