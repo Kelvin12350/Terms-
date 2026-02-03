@@ -8755,60 +8755,63 @@ init: () => {
             }
         },
 
-                                goToPage: (pageId) => {
-            // 1. Handle Page Visibility
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            const targetPage = document.getElementById(pageId);
-            if (targetPage) targetPage.classList.add('active');
-            
-            // 2. Handle Bottom Navigation Item Highlighting
-            document.querySelectorAll('.bottom-nav .nav-item').forEach(i => i.classList.remove('active'));
-            
-            if(pageId === 'home-page') document.getElementById('nav-home').classList.add('active');
-            if(pageId === 'matches-page') { document.getElementById('nav-matches').classList.add('active'); App.renderMatches(); }
-            if(pageId === 'requests-page') { 
-                document.getElementById('nav-requests').classList.add('active'); 
-                App.loadRequests(); 
-            }
-            if(pageId === 'chat-list-page') { 
-                document.getElementById('nav-chat').classList.add('active'); 
-                App.clearNotificationBadge();
-                App.renderChatList(); 
-            }
-            
-            // 🌟 DATA REFRESH: Ensures screens are never blank when opened
-            if (pageId === 'chat-color-page') {
-                App.renderColorPicker();
-            }
-            
-            if (pageId === 'chat-backup-page') {
-                App.initBackupUI(); // Refresh emails and timestamps
-            }
+                                goToPage: (pageId, pushToHistory = true) => {
+    // 1. Handle Page Visibility
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    const targetPage = document.getElementById(pageId);
+    if (targetPage) targetPage.classList.add('active');
+    
+    // 🌟 2. THE HISTORY FIX: Save this move in the phone's memory
+    // This allows the browser and hardware back button to "see" your navigation
+    if (pushToHistory) {
+        history.pushState({ pageId: pageId }, "", "");
+    }
+    
+    // 3. Handle Bottom Navigation Item Highlighting
+    document.querySelectorAll('.bottom-nav .nav-item').forEach(i => i.classList.remove('active'));
+    
+    if(pageId === 'home-page') document.getElementById('nav-home').classList.add('active');
+    if(pageId === 'matches-page') { 
+        document.getElementById('nav-matches').classList.add('active'); 
+        App.renderMatches(); 
+    }
+    if(pageId === 'requests-page') { 
+        document.getElementById('nav-requests').classList.add('active'); 
+        App.loadRequests(); 
+    }
+    if(pageId === 'chat-list-page') { 
+        document.getElementById('nav-chat').classList.add('active'); 
+        App.clearNotificationBadge();
+        App.renderChatList(); 
+    }
+    
+    // 🌟 4. DATA REFRESH: Ensures screens are never blank when opened
+    if (pageId === 'chat-color-page') {
+        App.renderColorPicker();
+    }
+    
+    if (pageId === 'chat-backup-page') {
+        App.initBackupUI(); // Refresh emails and timestamps
+    }
 
-            // 🌟 RESTORE PAGE RESET: Ensures the UI is fresh when entering
-            if (pageId === 'restore-chat-page') {
-                if(document.getElementById('restore-info-box')) document.getElementById('restore-info-box').style.display = 'none';
-                if(document.getElementById('restore-progress-container')) document.getElementById('restore-progress-container').style.display = 'none';
-                if(document.getElementById('restore-start-btn')) document.getElementById('restore-start-btn').style.display = 'block';
-                if(document.getElementById('restore-skip-btn')) document.getElementById('restore-skip-btn').style.display = 'block';
-            }
+    // 🌟 5. RESTORE PAGE RESET: Ensures the UI is fresh when entering
+    if (pageId === 'restore-chat-page') {
+        if(document.getElementById('restore-info-box')) document.getElementById('restore-info-box').style.display = 'none';
+        if(document.getElementById('restore-progress-container')) document.getElementById('restore-progress-container').style.display = 'none';
+        if(document.getElementById('restore-start-btn')) document.getElementById('restore-start-btn').style.display = 'block';
+        if(document.getElementById('restore-skip-btn')) document.getElementById('restore-skip-btn').style.display = 'block';
+    }
 
-            // 🌟 HELP PAGE LOGIC: Ensure it doesn't conflict with main-nav
-            if (pageId === 'help-page') {
-                // Add any specific help-page initialization here if needed
-            }
-            
-            // 🌟 NAVIGATION BAR VISIBILITY LOGIC 🌟
-            if (targetPage) {
-                const nav = document.getElementById('main-nav');
-                if (nav) {
-                    // If the target page is 'full-screen', we hide the bottom bar.
-                    // If you want the bar to show on the Help page, make sure the Help page 
-                    // DOES NOT have the 'full-screen' class in your HTML.
-                    nav.style.display = targetPage.classList.contains('full-screen') ? 'none' : 'flex';
-                }
-            }
-        },
+    // 🌟 6. NAVIGATION BAR VISIBILITY LOGIC 🌟
+    if (targetPage) {
+        const nav = document.getElementById('main-nav');
+        if (nav) {
+            // Hide the bottom bar on 'full-screen' pages
+            nav.style.display = targetPage.classList.contains('full-screen') ? 'none' : 'flex';
+        }
+    }
+ },
+
 
                     // --- 📹 NAVIGATION & CAMERA ENGINE ---
     openUploadPage: async () => {
@@ -23697,39 +23700,38 @@ const handleHardwareBack = async () => {
     const activePage = document.querySelector('.page.active');
     if (!activePage) return;
 
-    // 🏠 Pages where "Back" means "Exit"
-    const homePages = ['chat-list-page', 'home-page', 'main-feed'];
+    // 🏠 Pages where "Back" triggers an exit toast instead of a page change
+    const homePages = ['chat-list-page', 'home-page', 'landing-page', 'main-feed'];
     
     if (homePages.includes(activePage.id)) {
         App.showToast("Press back again to exit");
     } else {
-        // 🔙 Specialized Back Logic
-        if (activePage.id === 'boost-wizard-page' && state.boostStep > 1) {
-            // Go to previous step in the wizard
-            state.boostStep--; 
-            BoostEngine.renderStep();
-        } else if (activePage.id === 'chat-room-page' || activePage.id === 'status-viewer-page') {
-            App.goToPage('chat-list-page');
-        } else if (activePage.id === 'shop-page' || activePage.id === 'wallet-page') {
-            App.goToPage('chat-list-page');
-        } else {
-            // Default "Safety" back route
-            App.goToPage('chat-list-page');
-        }
+        // 🔙 Sub-page logic: Go back one step in the history stack
+        // This works for both mobile hardware buttons and browser back buttons
+        history.back(); 
     }
 };
 
-// Handle Android, iOS, and Browser
+// 🌍 PLATFORM ADAPTER (Capacitor vs Browser)
 if (window.Capacitor && Capacitor.isNativePlatform()) {
+    // 📱 NATIVE APP (Android/iOS)
     const { App: CapApp } = Capacitor.Plugins;
     CapApp.addListener('backButton', () => {
         handleHardwareBack();
     });
-} else {
-    window.addEventListener('popstate', () => {
-        handleHardwareBack();
-    });
 }
+
+// 🌐 WEB / BROWSER SYSTEM
+window.addEventListener('popstate', (event) => {
+    if (event.state && event.state.pageId) {
+        // Navigate to the previous page stored in history
+        // Pass 'false' to goToPage to avoid creating an infinite history loop
+        App.goToPage(event.state.pageId, false);
+    } else {
+        // Default fallback if Kelvin is at the very start of the app
+        App.goToPage('chat-list-page', false);
+    }
+});
 
 // --- 🏁 FINAL EXECUTION CALLS ---
 App.init();
